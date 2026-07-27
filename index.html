@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Yuva Mitra — Project Archive</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F2ECDC;
+    --paper-deep:#E9E1CC;
+    --ink:#241F16;
+    --ink-soft:#5B5645;
+    --teal:#123F3A;
+    --teal-soft:#dbe6e2;
+    --ochre:#B9812A;
+    --ochre-soft:#f2e3c6;
+    --clay:#8C3F26;
+    --clay-soft:#f0ddd2;
+    --moss:#4B5C3E;
+    --moss-soft:#dfe6d5;
+    --rule:#c9bd9e;
+    --shadow: 0 2px 14px rgba(36,31,22,0.08);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    line-height:1.5;
+  }
+  h1,h2,h3,.serif{ font-family:'Fraunces', serif; }
+  .mono{ font-family:'JetBrains Mono', monospace; }
+
+  /* ===== Top bar ===== */
+  .topbar{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 40px; border-bottom:1px solid var(--rule);
+    position:sticky; top:0; background:var(--paper); z-index:50;
+  }
+  .brand{ display:flex; align-items:baseline; gap:10px;}
+  .brand .mark{ font-family:'Fraunces',serif; font-weight:700; font-size:22px; letter-spacing:-0.02em;}
+  .brand .sub{ font-size:11px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft);}
+  .topbar nav{ display:flex; gap:28px; font-size:13px; letter-spacing:.03em;}
+  .topbar nav a{ color:var(--ink); text-decoration:none; border-bottom:1px solid transparent; padding-bottom:2px;}
+  .topbar nav a:hover{ border-color:var(--ochre); }
+
+  /* ===== Hero ===== */
+  .hero{ padding:64px 40px 30px; max-width:1200px; margin:0 auto; }
+  .hero .eyebrow{
+    font-size:12px; letter-spacing:.16em; text-transform:uppercase; color:var(--clay);
+    display:flex; align-items:center; gap:10px; margin-bottom:18px;
+  }
+  .hero .eyebrow::before{ content:""; width:26px; height:1px; background:var(--clay); display:inline-block;}
+  .hero h1{ font-size:clamp(34px,5vw,58px); font-weight:600; line-height:1.05; margin:0 0 20px; max-width:16ch;}
+  .hero h1 em{ font-style:italic; font-weight:500; color:var(--teal);}
+  .hero p.lede{ font-size:17px; max-width:620px; color:var(--ink-soft); margin:0 0 34px;}
+
+  .ledger{
+    display:grid; grid-template-columns:repeat(5,1fr);
+    border-top:1px solid var(--ink); border-bottom:1px solid var(--ink);
+  }
+  .ledger .cell{ padding:18px 20px; border-left:1px solid var(--rule); }
+  .ledger .cell:first-child{ border-left:none; }
+  .ledger .num{ font-family:'Fraunces',serif; font-size:30px; font-weight:600; }
+  .ledger .lbl{ font-size:11px; text-transform:uppercase; letter-spacing:.08em; color:var(--ink-soft); margin-top:2px;}
+
+  /* ===== Controls ===== */
+  .controls-wrap{ background:var(--paper-deep); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); position:sticky; top:64px; z-index:40;}
+  .controls{ max-width:1200px; margin:0 auto; padding:16px 40px; }
+  .searchrow{ display:flex; gap:10px; margin-bottom:12px; }
+  .searchrow input[type=text]{
+    flex:1; padding:12px 16px; border:1px solid var(--ink); background:var(--paper);
+    font-family:'Inter'; font-size:14px; border-radius:3px;
+  }
+  .searchrow input[type=text]:focus{ outline:2px solid var(--teal); outline-offset:1px;}
+  .filters{ display:flex; flex-wrap:wrap; gap:8px; align-items:center;}
+  select{
+    padding:9px 12px; border:1px solid var(--rule); background:var(--paper); color:var(--ink);
+    font-family:'Inter'; font-size:13px; border-radius:3px; cursor:pointer;
+  }
+  select:focus{ outline:2px solid var(--teal); }
+  .clearbtn{ font-size:12px; color:var(--clay); background:none; border:none; cursor:pointer; text-decoration:underline; padding:9px 4px;}
+  .resultcount{ font-size:12px; color:var(--ink-soft); margin-left:auto; white-space:nowrap;}
+
+  /* ===== Layout ===== */
+  .layout{ max-width:1200px; margin:0 auto; padding:32px 40px 100px; }
+  .grid{ display:grid; grid-template-columns:repeat(auto-fill,minmax(340px,1fr)); gap:18px;}
+
+  /* ===== Card ===== */
+  .card{
+    background:var(--paper); border:1px solid var(--rule); border-radius:4px; padding:20px 22px 18px;
+    display:flex; flex-direction:column; gap:10px; position:relative; box-shadow:var(--shadow);
+    border-left-width:4px;
+  }
+  .card.tag-water{ border-left-color:var(--teal); }
+  .card.tag-live{ border-left-color:var(--ochre); }
+  .card.tag-health{ border-left-color:var(--clay); }
+  .card.tag-inst{ border-left-color:var(--moss); }
+  .card .vertical{ font-size:10.5px; text-transform:uppercase; letter-spacing:.09em; font-weight:600;}
+  .tag-water .vertical{ color:var(--teal); }
+  .tag-live .vertical{ color:var(--ochre); }
+  .tag-health .vertical{ color:var(--clay); }
+  .tag-inst .vertical{ color:var(--moss); }
+  .card h3{ font-size:19px; font-weight:600; margin:0; line-height:1.25;}
+  .card .metarow{ display:flex; flex-wrap:wrap; gap:6px 14px; font-size:12px; color:var(--ink-soft); }
+  .card .metarow span b{ color:var(--ink); font-weight:600;}
+  .card .obj{ font-size:13.5px; color:var(--ink); }
+  .card .expand{ font-size:12px; color:var(--teal); cursor:pointer; text-decoration:underline; background:none; border:none; padding:0; text-align:left; font-family:'Inter';}
+  .card .details{ display:none; font-size:13px; border-top:1px dashed var(--rule); padding-top:10px; margin-top:2px;}
+  .card .details.open{ display:block; }
+  .card .details h4{ font-size:11px; text-transform:uppercase; letter-spacing:.06em; margin:10px 0 4px; color:var(--ink-soft);}
+  .card .details ul{ margin:4px 0; padding-left:18px;}
+  .card .details li{ margin-bottom:3px;}
+  .card .fylist{ display:flex; gap:5px; flex-wrap:wrap; margin-top:4px;}
+  .fy-chip{ font-family:'JetBrains Mono',monospace; font-size:10.5px; background:var(--paper-deep); border:1px solid var(--rule); padding:2px 6px; border-radius:2px;}
+  .source-line{ font-size:11px; color:var(--ink-soft); font-family:'JetBrains Mono',monospace; margin-top:6px;}
+
+  .empty{ text-align:center; padding:80px 20px; color:var(--ink-soft);}
+
+  /* ===== Chat FAB & Drawer ===== */
+  .chat-fab{
+    position:fixed; bottom:26px; right:26px; z-index:100;
+    background:var(--teal); color:var(--paper); border:none; border-radius:50px;
+    padding:15px 22px; font-family:'Fraunces',serif; font-size:15px; font-weight:600;
+    cursor:pointer; box-shadow:0 6px 18px rgba(18,63,58,0.35); display:flex; align-items:center; gap:8px;
+  }
+  .chat-fab:hover{ background:#0d2e2a; }
+  .chat-drawer{
+    position:fixed; top:0; right:-460px; width:440px; max-width:92vw; height:100%;
+    background:var(--paper); border-left:1px solid var(--ink); z-index:200;
+    transition:right .3s ease; display:flex; flex-direction:column; box-shadow:-6px 0 24px rgba(0,0,0,0.15);
+  }
+  .chat-drawer.open{ right:0; }
+  .chat-head{ padding:20px 22px 14px; border-bottom:1px solid var(--rule); display:flex; justify-content:space-between; align-items:center;}
+  .chat-head h3{ margin:0; font-size:20px;}
+  .chat-head p{ margin:2px 0 0; font-size:11.5px; color:var(--ink-soft);}
+  .chat-close{ background:none; border:none; font-size:22px; cursor:pointer; color:var(--ink-soft); line-height:1;}
+  .chat-body{ flex:1; overflow-y:auto; padding:18px 22px; display:flex; flex-direction:column; gap:14px;}
+  .msg{ font-size:13.5px; padding:11px 14px; border-radius:6px; max-width:92%; }
+  .msg.user{ background:var(--teal); color:var(--paper); align-self:flex-end; }
+  .msg.bot{ background:var(--paper-deep); align-self:flex-start; border:1px solid var(--rule);}
+  .msg.bot p{ margin:0 0 8px; }
+  .msg.bot p:last-child{ margin-bottom:0; }
+  .msg.bot ul{ margin:6px 0; padding-left:18px; }
+  .msg .cite{ font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--ink-soft); }
+  .chat-suggestions{ display:flex; flex-direction:column; gap:6px; padding:0 22px 14px;}
+  .sugg-btn{ text-align:left; font-size:12.5px; padding:8px 12px; background:var(--paper); border:1px solid var(--rule); border-radius:4px; cursor:pointer; color:var(--ink);}
+  .sugg-btn:hover{ border-color:var(--teal); }
+  .chat-input-row{ display:flex; gap:8px; padding:16px 22px; border-top:1px solid var(--rule);}
+  .chat-input-row input{ flex:1; padding:11px 13px; border:1px solid var(--ink); border-radius:4px; font-family:'Inter'; font-size:13.5px;}
+  .chat-input-row button{ background:var(--ink); color:var(--paper); border:none; padding:0 18px; border-radius:4px; cursor:pointer; font-family:'Fraunces',serif; font-weight:600;}
+  .chat-input-row button:disabled{ opacity:.5; cursor:default; }
+  .typing{ font-size:12px; color:var(--ink-soft); font-style:italic; }
+  .overlay{ position:fixed; inset:0; background:rgba(36,31,22,0.25); z-index:150; opacity:0; pointer-events:none; transition:opacity .3s;}
+  .overlay.open{ opacity:1; pointer-events:auto;}
+
+  footer{ border-top:1px solid var(--rule); padding:30px 40px; font-size:12px; color:var(--ink-soft); max-width:1200px; margin:0 auto;}
+
+  @media(max-width:720px){
+    .topbar,.hero,.controls,.layout,footer{ padding-left:18px; padding-right:18px;}
+    .ledger{ grid-template-columns:repeat(2,1fr);}
+    .ledger .cell:nth-child(3){ border-left:none;}
+    .chat-drawer{ width:100vw; }
+  }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="brand">
+    <span class="mark">Yuva Mitra</span>
+    <span class="sub">Project Archive</span>
+  </div>
+  <nav>
+    <a href="#browse">Browse</a>
+    <a href="#" onclick="openChat();return false;">Ask the Archive</a>
+  </nav>
+</div>
+
+<div class="hero">
+  <div class="eyebrow">Five Annual Reports · FY 2020–21 to FY 2024–25</div>
+  <h1>Every project, every district, every year <em>Yuva Mitra</em> has worked — in one place.</h1>
+  <p class="lede">A searchable record built directly from Yuva Mitra's Annual Reports: water resource development, livelihood promotion, health &amp; education, and institution building — with the donor, location, timeline and outcomes drawn from the source pages, nothing more.</p>
+
+  <div class="ledger" id="ledgerStats">
+    <div class="cell"><div class="num" id="statProjects">–</div><div class="lbl">Projects tracked</div></div>
+    <div class="cell"><div class="num" id="statVerticals">4</div><div class="lbl">Thematic verticals</div></div>
+    <div class="cell"><div class="num" id="statDistricts">–</div><div class="lbl">Districts reached</div></div>
+    <div class="cell"><div class="num" id="statDonors">–</div><div class="lbl">Donor &amp; CSR partners</div></div>
+    <div class="cell"><div class="num">5</div><div class="lbl">Years of reports</div></div>
+  </div>
+</div>
+
+<div class="controls-wrap" id="browse">
+  <div class="controls">
+    <div class="searchrow">
+      <input type="text" id="searchBox" placeholder="Search by project name, village, keyword… e.g. “goat rearing”, “Sinnar”, “MHM”">
+    </div>
+    <div class="filters">
+      <select id="fThematic"><option value="">All thematic areas</option></select>
+      <select id="fDonor"><option value="">All donors / CSR partners</option></select>
+      <select id="fYear"><option value="">All report years (FY)</option></select>
+      <select id="fState"><option value="">All states</option></select>
+      <select id="fDistrict"><option value="">All districts</option></select>
+      <select id="fSDG"><option value="">All SDGs</option></select>
+      <button class="clearbtn" onclick="clearFilters()">Clear filters</button>
+      <span class="resultcount" id="resultCount"></span>
+    </div>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="grid" id="cardGrid"></div>
+  <div class="empty" id="emptyState" style="display:none;">No projects match these filters. Try clearing one, or ask the archive directly →</div>
+</div>
+
+<footer>
+  Built from the uploaded Yuva Mitra Annual Reports (FY2020‑21, FY2021‑22, FY2022‑23, FY2023‑24, FY2024‑25). Figures and quotes are drawn from those documents; where a project spans multiple years, its record lists every report it appears in. This archive does not include information beyond what the source reports state.
+</footer>
+
+<button class="chat-fab" onclick="openChat()">💬 Ask the Archive</button>
+<div class="overlay" id="overlay" onclick="closeChat()"></div>
+<div class="chat-drawer" id="chatDrawer">
+  <div class="chat-head">
+    <div>
+      <h3>Ask the Archive</h3>
+      <p>Answers are grounded only in the 5 uploaded annual reports.</p>
+    </div>
+    <button class="chat-close" onclick="closeChat()">×</button>
+  </div>
+  <div class="chat-suggestions" id="chatSuggestions">
+    <button class="sugg-btn" onclick="askSuggested(this)">Where has Yuva Mitra worked in Water Resource Development &amp; Management?</button>
+    <button class="sugg-btn" onclick="askSuggested(this)">How many years has Yuva Mitra worked in the goat-rearing livelihood space?</button>
+    <button class="sugg-btn" onclick="askSuggested(this)">Which donors funded menstrual hygiene management projects?</button>
+  </div>
+  <div class="chat-body" id="chatBody"></div>
+  <div class="chat-input-row">
+    <input type="text" id="chatInput" placeholder="Ask about a project, donor, district…" onkeydown="if(event.key==='Enter')sendChat();">
+    <button id="chatSendBtn" onclick="sendChat()">Ask</button>
+  </div>
+</div>
+
+<script>
+/* =====================================================================
+   CHAT ENDPOINT CONFIG
+   - Leave CHAT_WORKER_URL empty ("") to call api.anthropic.com directly.
+     This only works when this file is viewed inside a Claude.ai artifact.
+   - To make "Ask the Archive" work on a public site (e.g. GitHub Pages),
+     deploy the included Cloudflare Worker and paste its URL below, e.g.:
+     const CHAT_WORKER_URL = "https://yuva-mitra-chat.yourname.workers.dev";
+   ===================================================================== */
+const CHAT_WORKER_URL = "";
+
+const PROJECTS = [{"id": "wrdm-001", "name": "Jalsamruddhi Water Security Program", "thematic_area": "Water Resource Development & Management", "donors": ["Tata Trusts", "Galaxy Surfactants", "ATE Chandra Foundation", "Gharda Chemicals", "Water Resources Department, Government of Maharashtra"], "location": {"villages": "300+ villages (incl. 65 villages of Dev River basin)", "block": "Sinnar and surrounding blocks", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2016, "end": 2022, "note": "De-silting initiative launched 2016; expanded July 2020 with WRD Maharashtra into a 5-year Participatory Irrigation Management (PIM) pilot targeting 2025"}, "objective": "De-silt existing water bodies to increase water-holding capacity and groundwater recharge, ensure year-round water availability for agriculture, and (from 2020) promote water-use efficiency and productivity through integrated off-farm/on-farm investment and market linkages in the Nandur-Madhyameshwar express canal command area.", "key_interventions": ["Desilting of water bodies/percolation tanks", "Deposition of excavated silt on barren farmland", "Establishment/strengthening of Water User Associations (WUAs)", "Micro-irrigation promotion", "Participatory groundwater management", "Farmer Producer Organization market linkages"], "outcomes": ["85+ Water User Associations established", "1,000+ farmers connected to FPOs for market access", "300+ villages covered, 400+ sites desilted", "5,000+ direct beneficiaries, 40,000+ indirect farmer beneficiaries", "70,00,000+ (7 million+) cubic metres of additional water storage created", "4,000+ hectares of land developed via silt deposition", "3,094 hectares brought under assured irrigation via Diversion-Based Irrigation (DBI) component; groundwater raised 10-12 feet, benefiting 2,376 families"], "beneficiaries": "5,000+ direct; 40,000+ indirect farmers; 1,17,752 households (cumulative, per FY2023-24 report)", "source": [{"report": "2020-2021", "page_note": "Water Resource Development section"}, {"report": "2021-2022", "page_note": "pp.22-26, Jal Samruddhi Achievements"}, {"report": "2022-2023", "page_note": "p.84 (PDF pg84), 'Ensuring Water Security - Jalsamruddhi Program'"}, {"report": "2023-2024", "page_note": "p.20, Water Resource Development vertical overview"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2020-2021", "2021-2022", "2022-2023", "2023-2024"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "wrdm-002", "name": "Jal Kavach Project (Phases I-III)", "thematic_area": "Water Resource Development & Management", "donors": ["Glenmark Foundation"], "location": {"villages": "29+ villages", "block": null, "district": "Nashik, Aurangabad (Maharashtra); Dhar (Madhya Pradesh)", "state": "Maharashtra, Madhya Pradesh"}, "years_active": {"start": 2022, "end": 2025, "note": "Reported as 2022-2023 (Phase, Nashik/Aurangabad), continuing FY2023-2024 as combined Maharashtra+MP project, and as 'Jal Kavach III' 2024-2025 (Dhar District)"}, "objective": "Improve water recharge potential through water augmentation in water-scarce, drought-affected regions with high runoff and severe soil erosion.", "key_interventions": ["Core wall gabion construction", "Desiltation of percolation tanks/water bodies", "Nala widening and deepening", "Farm pond construction", "Recharge wells and check dams", "Community mobilization and training"], "outcomes": ["664,912+ cubic metres of water storage created via desilting (66.49 crore litres)", "398,947+ cubic metres of recharge potential created", "1,035+ wells recharged", "3,471 farmers benefited, 2,239 hectares under improved irrigation (combined MH+MP)", "Jal Kavach III (2024-25): 1,02,000 CUM groundwater recharge created, 78,801 CUM silt excavated, 7 crore litres water storage, irrigation coverage up to 55%, ~3,391 individuals reached across 3 villages in Dhar"], "beneficiaries": "3,471 farmers (combined); 591 families (Jal Kavach III, Dhar)", "source": [{"report": "2022-2023", "page_note": "p.86, 'Empowering Rural Water Resources: The Success of the Jal Kavach Project'"}, {"report": "2023-2024", "page_note": "p.21, 'Jal Kavach Project Overview'"}, {"report": "2024-2025", "page_note": "p.21, 'Jal Kavach III \u2013 Community-Led Groundwater Recharge'"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2022-2023", "2023-2024", "2024-2025"], "district_list": ["Nashik", "Aurangabad (Maharashtra); Dhar (Madhya Pradesh)"], "state_list": ["Maharashtra", "Madhya Pradesh"]}, {"id": "wrdm-003", "name": "Atal Bhujal Yojana (Atal Jal) - Haryana", "thematic_area": "Water Resource Development & Management", "donors": ["Ministry of Jal Shakti (Government of India)", "Irrigation & Water Resources Department, Haryana", "World Bank"], "location": {"villages": null, "block": null, "district": "Mahendragarh, Bhiwani, Charkhi Dadri", "state": "Haryana"}, "years_active": {"start": 2022, "end": 2025}, "objective": "Build capacity of farmers and local stakeholders for groundwater management under the national Atal Bhujal Yojana scheme, launched by the Prime Minister on 25 December 2019.", "key_interventions": ["Capacity-building trainings on groundwater management", "Water Security Plan preparation", "Social audits", "Community awareness campaigns on sustainable groundwater use", "Equipment training and gender mainstreaming"], "outcomes": ["918 total capacity-building trainings completed across 3 districts (Mahendragarh 340, Charkhi Dadri 106, Bhiwani 472, per 2022-23 report)", "28,458 total participants trained across the three districts", "Gram Panchayat-level trainings continued through 2024-2025 (Mahendragarh 1,530+ participants)"], "beneficiaries": "28,458+ participants across Mahendragarh, Charkhi Dadri and Bhiwani districts", "source": [{"report": "2022-2023", "page_note": "p.87, 'Atal Bhujal Yojana: Capacity Building of the Farmers in 3 Districts of Haryana'"}, {"report": "2024-2025", "page_note": "p.24, 'Atal Bhujal Yojana - Haryana'"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2022-2023", "2024-2025"], "district_list": ["Mahendragarh", "Bhiwani", "Charkhi Dadri"], "state_list": ["Haryana"]}, {"id": "wrdm-004", "name": "Participatory Irrigation Management (PIM) - Nandur-Madhyameshwar Command Area", "thematic_area": "Water Resource Development & Management", "donors": ["Water Resources Department, Government of Maharashtra"], "location": {"villages": null, "block": null, "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2025, "note": "5-year pilot begun July 2020"}, "objective": "Bring 35,000 hectares of irrigable command area under irrigation, establish/strengthen ~121-123 Water User Associations, promote micro-irrigation on 5,000 acres, pilot participatory groundwater management, and increase net farmer income by 20% for ~39,000-40,000 farmers.", "key_interventions": ["Off-farm and on-farm investment", "Water User Association strengthening", "Micro-irrigation promotion", "Participatory groundwater management piloting", "Farmer Producer Company-based market linkages for 34,000 farmers"], "outcomes": ["Targeted 35,000 Ha irrigable command area", "Targeted establishment of 121-123 WUAs", "Targeted 20% net income increase for ~39,000-40,000 farmers"], "beneficiaries": "~39,000-40,000 farmers (targeted)", "source": [{"report": "2021-2022", "page_note": "pp.25-26, 'Promoting Water Use Efficiency and Productivity through Off-Farm and On-Farm Investments'"}, {"report": "2022-2023", "page_note": "referenced within Jalsamruddhi program narrative"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2021-2022", "2022-2023"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "wrdm-005", "name": "Water Conservation Project - Tata Autocomp Systems (Khed Block)", "thematic_area": "Water Resource Development & Management", "donors": ["Tata Autocomp Systems Ltd"], "location": {"villages": null, "block": "Khed Block", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2024}, "objective": "Address water security through conservation measures for agriculture and domestic use in a low-rainfall (729mm), high-runoff block, while promoting sustainable livelihood development.", "key_interventions": ["Desiltation of water bodies", "Hydro-geophysical investigation for aquifer mapping", "Construction/repair of water conservation structures", "Micro-forest (Miyawaki method) plantation", "Water stewardship training"], "outcomes": ["36,269.5 cubic metres desilted from 6 water bodies", "3.626 crore litres of additional water storage created", "9 water conservation structures constructed/repaired", "28 observation wells established for groundwater monitoring", "Micro-forests created on 4 plots", "500 native saplings (216 species) planted at Mandlewadi via Miyawaki method"], "beneficiaries": "400+ individuals trained across 3 villages", "source": [{"report": "2023-2024", "page_note": "p.22, 'Water Conservation Project - Tata Autocomp'; p.23 Miyawaki story"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2023-2024"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-006", "name": "Water Productivity in Practice - Knowledge & Action Network", "thematic_area": "Water Resource Development & Management", "donors": ["IHE Delft"], "location": {"villages": null, "block": "Sinnar Taluka", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2027}, "objective": "Close knowledge gaps and promote inclusive, gender-focused water management practices among marginal farmers, in collaboration with IIT Bombay.", "key_interventions": ["Farmer engagement on water-related challenges", "Mapping and data-based planning", "Digital tools piloting for water use", "Local institution strengthening"], "outcomes": ["Policy influence for sustainable development", "Promoted community participation and stakeholder teamwork", "Advanced women's empowerment in water management"], "source": [{"report": "2024-2025", "page_note": "p.22, 'Water Productivity in Practice - Knowledge & Action Network'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "wrdm-007", "name": "Water Conservation Project - Satara District", "thematic_area": "Water Resource Development & Management", "donors": ["Bekaert Industries Private Ltd"], "location": {"villages": "8 selected villages", "block": null, "district": "Satara", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2025}, "objective": "Improve water conservation and groundwater recharge through farm bunds, water absorption trenches, gabion/LBS structures and desiltation.", "key_interventions": ["Farm Bund and Water Absorption Trench construction", "Core Wall Gabion, Gabion and LBS structures", "Desiltation of ponds and water bodies", "Recharge shaft installation", "Water budgeting and farmer training"], "outcomes": ["Water budgeting completed in all 6 villages", "40 hectares covered by farm bund/water absorption trench work", "3 watershed structures built (150% of target)", "69,587 cubic metres desilted (193% of target)", "20 recharge shafts installed (8 extra beyond target)", "6 Water User Groups (WUG/WUA) formed"], "source": [{"report": "2024-2025", "page_note": "p.23, 'Water Conservation Project - Satara District'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Satara"], "state_list": ["Maharashtra"]}, {"id": "wrdm-008", "name": "Jalsamvardhan Project - Nandurbar", "thematic_area": "Water Resource Development & Management", "donors": ["L&T Technology Services"], "location": {"villages": null, "block": "Nandurbar Block", "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2024}, "objective": "Strengthen local water resources and promote climate resilience in Nandurbar block.", "key_interventions": ["Water resource strengthening interventions"], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.26, 'Jalsamvardhan Project - Nandurbar'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "wrdm-009", "name": "Water Conservation Project - Khed Taluka (Tata-Ficosa)", "thematic_area": "Water Resource Development & Management", "donors": ["Tata-Ficosa"], "location": {"villages": null, "block": "Khed Taluka", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Revive traditional water harvesting methods alongside modern recharge structures and farm bunding to improve groundwater recharge and drought preparedness.", "key_interventions": ["Reviving traditional water harvesting", "Recharge structures", "Farm bunding", "Farmer training on water-use practices"], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.25, 'Water Conservation Project' (Khed Taluka, Pune)"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-010", "name": "Water Conservation Project in Khed (Tata Trusts)", "thematic_area": "Water Resource Development & Management", "donors": ["Tata Trusts"], "location": {"villages": null, "block": "Khed Taluka", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Continued water conservation and management work in Khed taluka.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.27, 'Water Conservation Project in Khed'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-011", "name": "WASH & MHM in Khed", "thematic_area": "Health and Education", "donors": ["Tata Autocomp", "Tata Trust (Knowledge Partner)"], "location": {"villages": "45 villages", "block": "Khed Block", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2025, "note": "Since 2020; reported as 'MHM and WASH at Khed, Pune' (2023-24) and 'WASH & MHM in Khed' (2024-25)"}, "objective": "Enhance menstrual hygiene management and WASH infrastructure for students and women in rural Maharashtra.", "key_interventions": ["Water purifier installation", "Sanitation facility improvement", "Handwashing stations", "Bal Samiti strengthening", "MHM awareness sessions"], "outcomes": ["4,000 students reached in 20 schools; 31 water purifiers installed", "6,056 women and 2,171 adolescent girls reached through MHM sessions in 25 villages/schools (598 groups formed)", "130 males/boys engaged for gender sensitivity"], "beneficiaries": "4,000 students (WASH); 8,228 women/girls (MHM)", "source": [{"report": "2023-2024", "page_note": "p.44, 'MHM and WASH at Khed, Pune'"}, {"report": "2024-2025", "page_note": "p.28, 'WASH & MHM in Khed'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-012", "name": "Building a Resilient Ecosystem through Natural Resource Management", "thematic_area": "Water Resource Development & Management", "donors": ["HDFC Bank Ltd"], "location": {"villages": null, "block": "Mahad, Poladpur Block", "district": "Raigad", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Build a resilient ecosystem through natural resource management interventions in Raigad district.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.29, 'Building a Resilient Ecosystem through Natural Resource Management'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Raigad"], "state_list": ["Maharashtra"]}, {"id": "wrdm-013", "name": "Building Climate Resilience Communities", "thematic_area": "Water Resource Development & Management", "donors": ["Reliance Foundation"], "location": {"villages": null, "block": "Jintur and Parbhani Blocks", "district": "Parbhani", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Build climate-resilient communities in Parbhani district.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.30, 'Building Climate Resilience Communities'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Parbhani"], "state_list": ["Maharashtra"]}, {"id": "wrdm-014", "name": "WASH Project in SAMPARC Balgram Orphanage", "thematic_area": "Health and Education", "donors": [], "location": {"villages": null, "block": "Shel-Pimpalgaon", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Improve hygiene and sanitation habits among students, teachers and staff at SAMPARC Balgram Orphanage.", "key_interventions": ["Regular trainings and awareness programs", "WASH facility maintenance", "Children's Cabinet formation", "School Management Committee training"], "outcomes": ["56 students reached through WASH SBCC outreach", "Improved handwashing/sanitation facilities", "Washing station established"], "beneficiaries": "56 students", "source": [{"report": "2024-2025", "page_note": "p.32-33, 'WASH Project in SAMPARC Balgram Orphanage'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2024-2025"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-015", "name": "Integrated Sustainable Development through Water, Sanitation & Hygiene (WASH) Interventions - Patas", "thematic_area": "Water Resource Development & Management", "donors": ["Pune-Solapur Expressways Pvt. Ltd. (PSEPL)"], "location": {"villages": null, "block": "Patas, Tal. Daund", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Promote sustainable rural development through Water Conservation, Sanitation and Hygiene in a village facing irregular rainfall and depleting groundwater.", "key_interventions": ["Desilting", "Rainwater harvesting", "Community water management"], "outcomes": ["150 families benefited", "3 crore litres water storage capacity created", "31,598 cubic metres silt excavated", "0.80 hectares increase in irrigated area"], "beneficiaries": "150 families", "source": [{"report": "2024-2025", "page_note": "p.34, 'Integrated Sustainable Development through WASH Interventions'"}], "sdgs": [6, 13, 15], "budget": null, "report_years": ["2024-2025"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "wrdm-016", "name": "Building Climate Resilient Village at Nandurbar Block", "thematic_area": "Water Resource Development & Management", "donors": [], "location": {"villages": "10 villages (Natavad Cluster)", "block": "Nandurbar Block", "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2027}, "objective": "Build climate-resilient tribal villages through sustainable water management, climate-smart farming and livestock development, addressing water shortage, soil erosion, low agricultural productivity and migration.", "key_interventions": ["Water conservation", "Soil improvement", "Farmer Field Schools (FFS)", "Livestock development", "Village Development Committee formation"], "outcomes": ["10 Village Development Committees formed", "23 drip units installed", "12,884.5 cubic metres silt excavated", "10 village-level trainings conducted", "5 FFS trainings conducted"], "source": [{"report": "2024-2025", "page_note": "p.35, 'Building Climate Resilient Village at Nandurbar Block'"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "wrdm-017", "name": "Strengthening Drought Resilience in Dev River Basin", "thematic_area": "Water Resource Development & Management", "donors": ["The Nature Conservancy Centre, India (TNC)"], "location": {"villages": "65 villages", "block": "Sinnar Block", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2022}, "objective": "Build drought resilience through a comprehensive scientific study of Dev River ecology and catchment area development, including participatory groundwater management, village-level water security plans, and early warning systems.", "key_interventions": ["Scientific study of Dev River ecology with TNC", "Strengthening collective decision-making through grassroots institutions", "Participatory groundwater management and village water security plans", "Citizen science on dry-land ecosystems", "Early warning systems for informed decision-making"], "outcomes": [], "source": [{"report": "2020-2021", "page_note": "'Strengthening Drought Resilience in Dev River Basin'"}, {"report": "2021-2022", "page_note": "referenced in water vertical overview"}], "sdgs": [6, 13, 15], "beneficiaries": null, "budget": null, "report_years": ["2020-2021", "2021-2022"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-001", "name": "Goatery Based Women Livelihood Development Program (umbrella initiative)", "thematic_area": "Livelihood and Skill Development", "donors": ["Bajaj Allianz General Insurance Company", "H.T. Parekh Foundation", "Rambha Charitable Trust / Rambha Philanthropy Foundation", "Bajaj Finance Ltd", "Azim Premji Foundation"], "location": {"villages": "80-195 villages (grown over time)", "block": "Sinnar; Rahata and Sangamner (Ahmednagar); Akole Block (Ahilyanagar); Rajur Block (Ahilyanagar)", "district": "Nashik, Ahmednagar/Ahilyanagar", "state": "Maharashtra"}, "years_active": {"start": 2015, "end": 2027, "note": "Ongoing umbrella program since 2015, encompassing multiple donor-specific sub-projects detailed separately (see live-002 to live-006)"}, "objective": "Create sustainable, conservation-friendly livelihoods for marginalized rural women through scientific goat rearing, veterinary services, breed improvement, financial literacy and institution building (JLGs, goat farming producer companies).", "key_interventions": ["Knowledge dissemination on goat rearing", "Veterinary services incl. Pashusakhi cadre, veterinary ambulance", "Breeding services (Osmanabadi, Sangamneri breed promotion)", "Financial support / interest-free revolving fund for goat sheds", "Institution building (JLGs, Savitribai Phule Goat Farming Producer Company)", "Goat insurance", "Digital MIS and pilot goat traceability"], "outcomes": ["Cumulative (per FY2023-24 report): 160 villages, 17,025+ families, 2,840 JLGs formed, 1,06,440+ total goat population, mortality reduced from 17.75% to 2.66%", "Cumulative (per FY2024-25 report): 20,525 families benefited, 1,23,940 total goat population, 3,540 JLGs formed, 195 villages impacted", "Goat population in Maharashtra grew from 8.44M (2012) to 25.72M (2020)"], "beneficiaries": "20,525+ families / 17,025+ families (cumulative, varies by report year)", "source": [{"report": "2020-2021", "page_note": "Agri and Allied Livelihood Development section"}, {"report": "2021-2022", "page_note": "pp.17-20"}, {"report": "2022-2023", "page_note": "multiple project pages"}, {"report": "2023-2024", "page_note": "p.30, 'Livelihood and Skill Development' overview"}, {"report": "2024-2025", "page_note": "p.36-40"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2020-2021", "2021-2022", "2022-2023", "2023-2024", "2024-2025"], "district_list": ["Nashik", "Ahmednagar", "Ahilyanagar"], "state_list": ["Maharashtra"]}, {"id": "live-002", "name": "Goat-Based Livelihood: Empowering Women and Communities (Bajaj Allianz)", "thematic_area": "Livelihood and Skill Development", "donors": ["Bajaj Allianz General Insurance Company"], "location": {"villages": "20 villages", "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2023}, "objective": "Enhance the goat-based livelihood ecosystem for women through end-to-end interventions: sale of live goats, milk, fodder and vermicompost.", "key_interventions": ["Goat shed construction (investment of Rs. 501.5 lakh)", "Veterinary services and disease awareness", "Fodder management training"], "outcomes": ["Goat population grew from 14,571 to 20,603", "1,003 goat sheds established", "Mortality ratio reduced from 22% to 4%", "Gross income of Rs. 1533.55 lakh from live goat sales, milk and manure", "2,000+ women achieved financial independence"], "beneficiaries": "2,000+ women", "budget": "Rs. 501.5 lakh (shed investment)", "source": [{"report": "2022-2023", "page_note": "p.97, 'Empowering Rural Livelihoods: Yuva Mitra's Goat Rearing Project'"}], "sdgs": [1, 2, 5, 8, 13], "report_years": ["2022-2023"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-003", "name": "Cultivating Prosperity: Goat-Based Livelihood (H.T. Parekh Foundation)", "thematic_area": "Livelihood and Skill Development", "donors": ["H.T. Parekh Foundation"], "location": {"villages": "30 villages", "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2023}, "objective": "Develop livelihood opportunities for women in Sinnar block based on goat rearing.", "key_interventions": ["Goat shed construction (investment Rs. 214.5 lakh)", "Knowledge transfer on goat rearing and disease management"], "outcomes": ["Goat population grew from 10,652 to 21,348", "429 goat sheds established", "Mortality ratio reduced from 21% to 2%", "Gross income of Rs. 671.16 lakh from live goat sales, milk and manure"], "budget": "Rs. 214.5 lakh (shed investment)", "source": [{"report": "2022-2023", "page_note": "p.96, 'Cultivating Prosperity: Yuva Mitra's Synergy with H.T. Parekh Foundation'"}], "sdgs": [1, 2, 5, 8, 13], "beneficiaries": null, "report_years": ["2022-2023"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-004", "name": "Nurturing Ecosystems: Goat Farming Initiative for Women (Rambha Charitable Trust)", "thematic_area": "Livelihood and Skill Development", "donors": ["Rambha Charitable Trust / Rambha Philanthropy Foundation"], "location": {"villages": "20 villages", "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2027, "note": "First phase 2021-2024 (2022-23/2023-24 reports); new phase 2024-2027 (2024-25 report)"}, "objective": "Empower women through goat farming livelihoods, fostering economic independence and environmental conservation in drought-prone villages.", "key_interventions": ["445 JLGs formed involving 2,225 women", "Village-level JLG trainings (goat business, vermicomposting, silage prep, vaccination)", "Financial literacy sessions", "Veterinary care via Pashusakhis", "Goat insurance", "Women's Melawa events"], "outcomes": ["Goat population grew from 9,618 to 11,774 (first phase)", "122 goat sheds established (investment Rs. 61 lakh)", "Mortality ratio reduced from 20% to 8%", "Income of Rs. 532.49 lakh from goat sales/milk/manure", "New phase: 1,915 women mobilized into 383 JLGs; 1,157 women trained; 2,161 goats treated, 8,727 vaccinated by 20 Pashusakhis"], "beneficiaries": "2,225 women (Phase 1); 2,020 women mobilized (Phase 2)", "budget": "Rs. 61 lakh (Phase 1 shed investment)", "source": [{"report": "2022-2023", "page_note": "p.99, 'Nurturing Ecosystems: Goat Farming Initiative for Women'"}, {"report": "2023-2024", "page_note": "p.32, 'Goat-Based Livelihood: Empowering Women and Communities'"}, {"report": "2024-2025", "page_note": "p.38-39"}], "sdgs": [1, 2, 5, 8, 13], "report_years": ["2022-2023", "2023-2024", "2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-005", "name": "Goat-Based Livelihood Enhancement (Bajaj Finance Ltd) - Akole Block", "thematic_area": "Livelihood and Skill Development", "donors": ["Bajaj Finance Ltd"], "location": {"villages": "15-20 villages", "block": "Akole Block", "district": "Ahmednagar / Ahilyanagar", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2027}, "objective": "Improve socio-economic status of marginalized communities in Akole Block through goat-based livelihood, women's empowerment, financial literacy and market access.", "key_interventions": ["410 JLGs formed with 2,050 women", "Veterinary services and vaccination camps", "Goat insurance", "Exposure visits to MPKV Rahuri", "Chaff cutter distribution, fodder demonstrations"], "outcomes": ["1,706 goats treated during the year; 13,959 goats vaccinated", "331 goats insured", "253 goats purchased by JLG members benefiting 102 families", "190 families received improved goat sheds"], "beneficiaries": "2,050 women", "source": [{"report": "2023-2024", "page_note": "p.33, 'Goat-Based Livelihood: Empowering Women and Communities' (Bajaj Finance)"}, {"report": "2024-2025", "page_note": "p.41, 'Sustainable Livelihood Enhancement...Through Goat Rearing' (Akole Block)"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Ahmednagar", "Ahilyanagar"], "state_list": ["Maharashtra"]}, {"id": "live-006", "name": "Empowering Rural Tribal Communities through Agriculture, Water Conservation and Goat-Based Sustainable Livelihoods", "thematic_area": "Livelihood and Skill Development", "donors": ["Azim Premji Foundation"], "location": {"villages": "15 villages", "block": "Rajur Block", "district": "Ahilyanagar", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2027}, "objective": "Address climate change, unemployment, land degradation and water scarcity through sustainable livelihood models (goat rearing, trellis-based vegetable farming, vermicomposting, water conservation) for small, marginal and landless tribal families.", "key_interventions": ["Goat rearing", "Trellis-based vegetable farming", "Vermicomposting", "Water conservation"], "outcomes": ["269 JLGs formed", "600+ families covered", "1,345 women trained", "1,200 insured goat kids distributed"], "beneficiaries": "600+ families", "source": [{"report": "2024-2025", "page_note": "p.40, 'Empowering Rural Tribal Communities through Agriculture, Water Conservation and Goat Based Sustainable Livelihoods'"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2024-2025"], "district_list": ["Ahilyanagar"], "state_list": ["Maharashtra"]}, {"id": "live-007", "name": "Lakhpati Kisan Project", "thematic_area": "Livelihood and Skill Development", "donors": ["Shabari/Shabri Adivasi Vitta Va Vikas Mahamandal, Nashik"], "location": {"villages": "40 villages", "block": "Akkalkuwa and Dhadgaon Blocks", "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2022, "end": 2025}, "objective": "Improve household incomes through layered agriculture-based livelihood interventions - doubling annual incomes of tribal families from ~Rs. 30,000 to Rs. 60,000 via agriculture, irrigation, goat-based livelihoods and institution building.", "key_interventions": ["Drip irrigation systems (installed on 350+ acres)", "Trellis systems for vegetable production", "Solar-powered irrigation", "Group wells (20), solar irrigation systems (7), borewells (20)", "Gabion (96) and loose boulder (199) structures", "Osmanabadi buck induction, goat distribution", "220 Joint Liability Groups formed", "2 Farmer Producer Organizations established"], "outcomes": ["4,562 tribal households covered (of 6,000 target) across 40 villages", "Average family income increased by Rs. 98,450 (drip systems) and Rs. 55,780-68,450 (trellis systems)", "Seasonal income increases of Rs. 50,380-73,780 for water conservation/solar irrigation beneficiaries", "1,708 beneficiaries trained on livestock through 26 sessions", "450+ shareholders across 2 new FPOs"], "beneficiaries": "4,562 households from 40 villages", "source": [{"report": "2022-2023", "page_note": "p.102-103, 'Generating Wealth through Livelihood Specific Interventions: Lakhpati Kisan'"}, {"report": "2023-2024", "page_note": "pp.38-39, 'Lakhpati Kisan Project'"}, {"report": "2024-2025", "page_note": "pp.42-43"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2022-2023", "2023-2024", "2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "live-008", "name": "Integrated Village Development Programme (IVDP), Sakri", "thematic_area": "Livelihood and Skill Development", "donors": ["Apraava Energy Pvt. Ltd. (formerly CLP India)"], "location": {"villages": "5 villages (Bhamer, Perejpur, Saltek, Jayeshree Society, Jagatpur)", "block": "Sakri Block", "district": "Dhule", "state": "Maharashtra"}, "years_active": {"start": 2019, "end": 2022, "note": "Commenced November 2019"}, "objective": "Deliver holistic socio-economic development through water resource development and soil moisture conservation, school infrastructure development, women/youth empowerment, and government scheme utilization.", "key_interventions": ["School/Anganwadi infrastructure improvement", "Village-level water budgeting and watershed conservation", "Farmer exposure visits (FPO, Krishi Vigyan Kendra)", "Women's self-help group knowledge dissemination", "Strengthening of 4,000+ drinking water resources", "Nagli Papad (endemic crop) livelihood promotion"], "outcomes": ["Annual income of targeted population increased by 35%", "Soil moisture level increased by 15%+", "Water storage capacity increased by 3,80,00,000+ litres", "25 self-help groups supported", "20% increase in farm productivity", "6,000+ unique beneficiaries", "2,900+ watershed treatments, 10 Village Development Committees, 400+ farm field school sessions (per 2023-24 report)"], "beneficiaries": "6,000+ beneficiaries; 1,200+ families; 1,268 families (socio-economic development, per 2020-21 report)", "source": [{"report": "2020-2021", "page_note": "'Integrated Village Development'"}, {"report": "2021-2022", "page_note": "pp.18-19"}, {"report": "2022-2023", "page_note": "pp.100-101, 'Integrated Village Development Programme: Fostering Holistic Transformation'"}, {"report": "2023-2024", "page_note": "p.31 (overview)"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2020-2021", "2021-2022", "2022-2023", "2023-2024"], "district_list": ["Dhule"], "state_list": ["Maharashtra"]}, {"id": "live-009", "name": "Skill Development for Women (Fashion Designing & Beauty Parlour Course)", "thematic_area": "Livelihood and Skill Development", "donors": ["KSB Pumps Ltd", "KSB Care Charitable Trust"], "location": {"villages": null, "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2019, "end": 2024, "note": "Started 2019 (fashion designing); expanded FY2023-24 to include beauty parlour training"}, "objective": "Help rural women acquire practical fashion design and beauty services skills for financial independence.", "key_interventions": ["4-month fashion designing course", "Vocational training in beauty services", "Soft-skill training and exposure visits"], "outcomes": ["First phase trained 30 women, each given a sewing machine (earning Rs. 4,000-6,000/month)", "160 women trained in expanded FY2023-24 program across fashion design and beauty parlour tracks", "100% certification rate (joint certification with KSB Care Charitable Trust)", "During COVID-19, trainees produced face masks for frontline workers"], "beneficiaries": "160 women (FY2023-24); 30 women (initial phase)", "source": [{"report": "2023-2024", "page_note": "p.31 (overview), p.35 'Skill Development through Fashion Designing and Beauty Parlour Course'"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2023-2024"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-010", "name": "Krishi Mitra", "thematic_area": "Livelihood and Skill Development", "donors": ["SMFG India Credit Co. Ltd."], "location": {"villages": "80 villages", "block": null, "district": "Nashik and Ahilyanagar", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Help small farmers, especially women, practice organic and sustainable farming through slurry tanks, vermi-compost support, farmer field schools, and women-led kitchen gardens.", "key_interventions": ["Slurry tank construction", "Vermi-compost support", "Farmer field schools", "Women-led kitchen gardens", "Market linkage facilitation"], "outcomes": ["467 farmers linked to markets/FPOs", "576 acres of farmland benefited via 39,000 litres of organic manure", "416 farmers linked to government schemes (benefits worth Rs. 1.5+ crore)", "2,287 farmers benefited with support facilitation turnover of Rs. 2.1 crore"], "beneficiaries": "2,287 farmers", "source": [{"report": "2024-2025", "page_note": "p.66, 'Krishi Mitra'"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik", "Ahilyanagar"], "state_list": ["Maharashtra"]}, {"id": "live-011", "name": "SAKHI (Financial Literacy Program)", "thematic_area": "Livelihood and Skill Development", "donors": ["SMFG", "SCORE Livelihood Foundation"], "location": {"villages": null, "block": "Niphad, Kopargaon, Sangamner", "district": "Nashik and Ahilyanagar", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Empower rural communities, especially women, through financial awareness and inclusion (savings, budgeting, insurance, digital payments).", "key_interventions": ["Interactive workshops and training sessions", "Government financial scheme awareness", "Digital tools training (UPI, mobile banking)", "Partnership with local banks for account access"], "outcomes": ["7,023 women trained with pre/post training sessions", "57 women mobilized for advanced training programs", "198 financial inclusion workshops conducted", "1,100 women participated in Women's Day programs", "551 women facilitated for financial access (bank accounts, insurance, loans)"], "beneficiaries": "7,023 women", "source": [{"report": "2024-2025", "page_note": "p.46, 'SAKHI'"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik", "Ahilyanagar"], "state_list": ["Maharashtra"]}, {"id": "live-012", "name": "Wage Improvement in Seed Hybrids (WISH)", "thematic_area": "Livelihood and Skill Development", "donors": ["Netherlands Enterprise Agency (RVO) / Dutch Ministry of Economic Affairs", "Arisa (implementing partner)", "BASF and Syngenta (industry partners)"], "location": {"villages": null, "block": null, "district": "Buldhana and Jalna (also Karnataka)", "state": "Maharashtra, Karnataka"}, "years_active": {"start": 2021, "end": 2025, "note": "Launched August 2021; a four-year project"}, "objective": "Address child labour and ensure minimum wage compliance in the vegetable seed sector, engaging growers, suppliers, labourers and community members.", "key_interventions": ["Awareness raising on legal minimum wage, child labour, gender issues, financial inclusion, grievance mechanisms", "Multi-stakeholder engagement", "Policy improvement advocacy with seed companies"], "outcomes": ["Reached 1,285 labourers and 255 growers", "400+ training meetings conducted", "Legal minimum wage adoption improved to Rs. 314/day", "60 labour groups formed and strengthened"], "beneficiaries": "1,285 labourers, 255 growers", "source": [{"report": "2023-2024", "page_note": "p.37, 'Wage Improvements in Seed Hybrids (WISH)'"}, {"report": "2024-2025", "page_note": "p.45, 'Wage Improvement in Seed Hybrids (WISH)'"}], "sdgs": [1, 2, 5, 8, 13], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Buldhana", "Jalna (also Karnataka)"], "state_list": ["Maharashtra", "Karnataka"]}, {"id": "live-013", "name": "Vasundhara - Tree Plantation Project", "thematic_area": "Livelihood and Skill Development", "donors": [], "location": {"villages": null, "block": "Ankaleshwar", "district": "Bharuch", "state": "Gujarat"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Tree plantation initiative in Bharuch district, Gujarat.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.61, 'Vasundhara - Tree Plantation Project'"}], "sdgs": [1, 2, 5, 8, 13], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Bharuch"], "state_list": ["Gujarat"]}, {"id": "live-014", "name": "Eco-Wall Initiative", "thematic_area": "Livelihood and Skill Development", "donors": [], "location": {"villages": null, "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Environmental initiative in Sinnar, Nashik district.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.62, 'Eco-Wall Initiative'"}], "sdgs": [1, 2, 5, 8, 13], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "live-015", "name": "Installation of Solar Street Lights in Remote Tribal Villages of Nandurbar District", "thematic_area": "Livelihood and Skill Development", "donors": ["Westbridge Advisor LLP", "Online Giving Foundation"], "location": {"villages": null, "block": null, "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Install solar street lights in remote tribal villages to improve safety and access.", "key_interventions": ["Solar street light installation"], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.60"}], "sdgs": [1, 2, 5, 8, 13], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "live-016", "name": "Creating Eco Balance Villages through Sustaining Biodiversity, Land Degradation, and Climate Adaptation", "thematic_area": "Livelihood and Skill Development", "donors": [], "location": {"villages": null, "block": null, "district": "Ratnagiri", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2026}, "objective": "Sustain biodiversity, address land degradation, and support climate adaptation in Ratnagiri district.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.59"}], "sdgs": [1, 2, 5, 8, 13], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Ratnagiri"], "state_list": ["Maharashtra"]}, {"id": "health-001", "name": "Menstrual Hygiene and Health Management (TATA AIA)", "thematic_area": "Health and Education", "donors": ["TATA AIA"], "location": {"villages": "20 villages", "block": "Sinnar", "district": "Nashik / Dhule / Pune", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2023}, "objective": "Provide access to WASH facilities to 8,000 children across 40 schools; engage 14,850 women and adolescent girls on menstrual hygiene management, dignity, and safe/hygienic practices.", "key_interventions": ["Handwash station development/rejuvenation", "SBCC campaigns", "Cloth pad stitching training", "Awareness sessions on menstruation myths and science"], "outcomes": ["Awareness sessions conducted in 27 program villages", "6 schools reached, impacting 1,900+ individuals", "3,216 women and 1,740 adolescent girls positively impacted"], "beneficiaries": "14,850 women and adolescent girls (target); 4,956 reached (2022-23 reporting)", "source": [{"report": "2021-2022", "page_note": "pp.30-31, Health and Education section"}, {"report": "2022-2023", "page_note": "p.90, 'Menstrual Hygiene and Health Management'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2021-2022", "2022-2023"], "district_list": ["Nashik", "Dhule", "Pune"], "state_list": ["Maharashtra"]}, {"id": "health-002", "name": "Menstrual Hygiene Management and WASH (Tata Autocomp, Chakan)", "thematic_area": "Health and Education", "donors": ["Tata Autocomp", "Tata Trust (Knowledge Partner)"], "location": {"villages": "27 villages", "block": "Chakan", "district": "Pune", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2023}, "objective": "Promote menstrual health management and WASH practices among women and adolescents in Chakan.", "key_interventions": ["MHM awareness sessions", "Front Line Worker (FLW) training", "Cloth pad stitching training", "School Management Committee (SMC) WASH training", "Bal Samiti formation", "Handwashing station establishment"], "outcomes": ["3,591 women and 1,537 adolescent girls reached", "200 FLWs trained", "600 women trained in cloth pad stitching", "10 schools with SMC training, Bal Samitis, handwashing stations", "7 clean drinking water facilities established", "1,785 students reached through SBCC/Hum Samajhdar sessions"], "beneficiaries": "5,376+ individuals across 30 schools", "source": [{"report": "2022-2023", "page_note": "p.91, 'Menstrual Hygiene Management and Water Sanitation and Hygiene (WASH)'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2022-2023"], "district_list": ["Pune"], "state_list": ["Maharashtra"]}, {"id": "health-003", "name": "Life Skill Development for Adolescents", "thematic_area": "Health and Education", "donors": ["Collective Good Foundation"], "location": {"villages": null, "block": "Mahad", "district": "Raigad", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2023}, "objective": "Equip adolescents with life skills, soft skills, career guidance, and gender sensitivity for a responsible, inclusive society.", "key_interventions": ["Life-skill and soft-skill education modules", "Career guidance", "Parent/community sensitization", "Sukanya Helpline", "Parent-Teacher Associations"], "outcomes": [], "source": [{"report": "2021-2022", "page_note": "p.32, 'Life Skill Development for Adolescents'"}, {"report": "2022-2023", "page_note": "pp.93, 'Life Skill Development for Adolescents'"}], "sdgs": [3, 4, 5, 6], "beneficiaries": null, "budget": null, "report_years": ["2021-2022", "2022-2023"], "district_list": ["Raigad"], "state_list": ["Maharashtra"]}, {"id": "health-004", "name": "Arogya Mitra (Malnutrition Response Program)", "thematic_area": "Health and Education", "donors": ["Bajaj Holdings & Investment Ltd."], "location": {"villages": "11 villages, 19 padas", "block": "Jawhar Block", "district": "Palghar", "state": "Maharashtra"}, "years_active": {"start": 2019, "end": 2022}, "objective": "Build a resilient ecosystem against acute malnutrition in children under 6, and anaemia in pregnant/lactating mothers.", "key_interventions": ["Cadre of 11 Community Health Workers and 10 Village Health Committees developed", "Health camps and nutrition education"], "outcomes": ["SAM (Severe Acute Malnutrition) rate decreased 73%, from 23% (March 2018) to 6% (March 2022)", "MAM rate decreased 60%, from 39% to 15%", "Percentage of normal children increased 103%, from 39% to 79%", "2,500+ families supported (per 2023-24 retrospective)"], "beneficiaries": "2,565 families", "source": [{"report": "2020-2021", "page_note": "Success Story - Arogya Mitra"}, {"report": "2021-2022", "page_note": "pp.28-29, 'Building resilient ecosystem against Malnutrition - Arogya Mitra'"}, {"report": "2023-2024", "page_note": "p.43 (overview, retrospective)"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2020-2021", "2021-2022", "2023-2024"], "district_list": ["Palghar"], "state_list": ["Maharashtra"]}, {"id": "health-005", "name": "WASH in Rural Schools (TATA Autocomp, cumulative)", "thematic_area": "Health and Education", "donors": ["TATA Autocomp Systems Limited"], "location": {"villages": null, "block": null, "district": "Maharashtra (multiple districts)", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2024}, "objective": "Improve health and hygiene standards in rural schools through water purification, sanitation infrastructure, and hygiene practice promotion.", "key_interventions": ["Water purification system installation", "Sanitation infrastructure improvement", "Hygiene practice training"], "outcomes": ["75 schools enhanced, benefiting over 15,000 students (cumulative)"], "beneficiaries": "15,000+ students", "source": [{"report": "2023-2024", "page_note": "p.43, WASH overview"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024"], "district_list": ["Maharashtra (multiple districts)"], "state_list": ["Maharashtra"]}, {"id": "health-006", "name": "Barakhadi Program / Barakhadi Express Mobile Library", "thematic_area": "Health and Education", "donors": ["Piaggio Vehicle Pvt. Ltd.", "Yuva Mitra (self-funded, later phase)"], "location": {"villages": null, "block": "Baramati Block; Dubere Block, Sinnar (later phase)", "district": "Pune; Nashik", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2025, "note": "2020-2022 (Piaggio-funded, Baramati); relaunched as 'Barakhadi Express \u2013 Mobile Library Initiative' 2024-2025 in Dubere Block, Sinnar"}, "objective": "Literacy and personality development for school children through an engaging mobile library, reducing dropout rates and fostering reading habits.", "key_interventions": ["Mobile library visits to ZP schools", "Teacher training", "Parent counselling"], "outcomes": ["Reached 5,000+ children annually across 54 ZP Schools (Baramati phase)"], "beneficiaries": "5,095-5,000+ children", "source": [{"report": "2021-2022", "page_note": "p.33, 'Barakhadi Express - Mobile Library'"}, {"report": "2023-2024", "page_note": "p.43, overview"}, {"report": "2024-2025", "page_note": "p.58, 'Barakhadi Express \u2013 Mobile Library Initiative'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2021-2022", "2023-2024", "2024-2025"], "district_list": ["Pune; Nashik"], "state_list": ["Maharashtra"]}, {"id": "health-007", "name": "WADI Project (Nandurbar)", "thematic_area": "Health and Education", "donors": ["NABARD (Tribal Development Fund)"], "location": {"villages": "10 villages", "block": "Nandurbar Block", "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2029, "note": "Reported as new project 2023-24; continuing as 'Integrated Tribal Development Programme (TDF WADI)' 2023-2029 in 2024-25 report"}, "objective": "Transform wastelands into productive orchards ('Wadis') for socio-economic rehabilitation of 450 small/marginal tribal farmers and 50 landless individuals from Scheduled Tribes, through horticulture, forestry and vegetable cultivation.", "key_interventions": ["Mango and guava plantation", "Water resource development (drip irrigation, submersible pumps)", "Wal Papdi vegetable cultivation", "Health camps and awareness sessions"], "outcomes": ["200 farmers prepared 50 pits each for mango/guava planting", "Drip irrigation to 173 farmers, petrol engines to 25, submersible pumps to 2", "Additional income of ~Rs. 30,000 from Wal Papdi cultivation", "2 health camps benefiting 242 individuals", "450 acres cultivated by 2024-25 (200 acres FY22-23, 250 acres FY23-24); average net income Rs. 15,000/farmer"], "beneficiaries": "200 (164 male, 36 female) across 10 villages; 450 families (2024-25 report)", "source": [{"report": "2023-2024", "page_note": "p.36, 'WADI Project Overview'"}, {"report": "2024-2025", "page_note": "p.67, 'Integrated Tribal Development Programme (TDF WADI)'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "health-008", "name": "Integrated Menstrual Hygiene Management Program - Mahad", "thematic_area": "Health and Education", "donors": ["Collective Good Foundation", "Vinati Organics Pvt. Ltd."], "location": {"villages": null, "block": "Mahad", "district": "Raigad", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2024, "note": "Launched April 2023"}, "objective": "Enhance menstrual health and hygiene practices among women and adolescent girls, reducing stigma and improving access to menstrual products.", "key_interventions": ["MHM awareness sessions", "Front-line worker training", "Affordable menstrual product provision", "Sanitation infrastructure enhancement"], "outcomes": ["430 women, 101 adolescent girls, 106 adolescent boys reached", "16 frontline workers trained", "87% demonstrated better understanding; 92% of adolescent girls received education", "95% using hygienic menstrual products; 80% of adolescent girls reported better access"], "beneficiaries": "637 direct participants (women, girls, boys)", "source": [{"report": "2023-2024", "page_note": "p.45, 'Integrated Menstrual Hygiene Management Program' (Mahad)"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024"], "district_list": ["Raigad"], "state_list": ["Maharashtra"]}, {"id": "health-009", "name": "Integrated Menstrual Hygiene Management Program - Lonand/Ranjangaon MIDC", "thematic_area": "Health and Education", "donors": ["Bekaert Mukand Wire Industries Pvt. Ltd."], "location": {"villages": null, "block": "Lonand and Ranjangaon MIDC", "district": null, "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2024}, "objective": "Raise menstrual health awareness and enable sustainable, eco-friendly menstrual waste management (via PadCare) across 10 schools.", "key_interventions": ["Awareness campaigns for schoolgirls and female teachers", "PadCare vending machine and bin installation", "Vending machine/disposal mechanism training"], "outcomes": ["2,337 beneficiaries reached", "13,000 sanitary pads distributed", "10 training sessions for 900 adolescent girls", "13 PadCare vending machines and 40 PadCare bins installed", "6.51 kg menstrual waste recycled in first month (13.93 kg CO2-equivalent saved, 130.2 litres landfill space saved)"], "beneficiaries": "2,337 individuals", "source": [{"report": "2023-2024", "page_note": "p.46, 'Integrated Menstrual Hygiene Management Program' (Lonand/Ranjangaon)"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024"], "district_list": [], "state_list": ["Maharashtra"]}, {"id": "health-010", "name": "\"Mera Gaav Mera Pride\" Program", "thematic_area": "Health and Education", "donors": ["Collective Good Foundation", "Vinati Organics Pvt. Ltd."], "location": {"villages": null, "block": "Mahad", "district": "Raigad", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2024}, "objective": "Empower rural women and adolescent girls through digital literacy, financial literacy, social protection, sexual/reproductive health and leadership development.", "key_interventions": ["Digital literacy training (online payments, fraud prevention)", "Financial literacy training", "Menstrual and reproductive health education", "Government welfare scheme awareness", "Computer skills training with IIT-B's Spoken Tutorial"], "outcomes": ["420 women trained in digital literacy", "500 women trained in financial literacy", "505 women educated on menstrual health, 505 on reproductive health", "490 women informed on social protection schemes", "400 women trained in basic computer skills"], "beneficiaries": "500+ women", "source": [{"report": "2023-2024", "page_note": "p.47, '\"Mera Gaav Mera Pride Program\"'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024"], "district_list": ["Raigad"], "state_list": ["Maharashtra"]}, {"id": "health-011", "name": "NEERDHUR Smokeless Chullahs / Pavak Chulha Project", "thematic_area": "Health and Education", "donors": ["Glenmark Foundation", "Spandan Samaj Seva Samiti", "CSIR-NEERI (technology partner)"], "location": {"villages": "30-35 villages", "block": "Akkalkuwa and Dhadgaon Blocks", "district": "Nandurbar", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2025}, "objective": "Transform household cooking practices via smokeless, multi-fuel NEERDHUR/Pavak Chulha cookstoves to improve indoor air quality and reduce respiratory illness and environmental impact.", "key_interventions": ["Distribution of 3,500 NEERDHUR/Pavak smokeless cookstoves", "Formation and training of 350 women-led Environmental Care Groups (ECGs)", "IEC/BCC community education workshops"], "outcomes": ["3,500 households/chullahs targeted and distributed across 30 villages", "Stove offers 30-42% thermal efficiency, 60%+ reduction in harmful emissions (PM2.5, CO)"], "beneficiaries": "3,500 households", "source": [{"report": "2023-2024", "page_note": "p.48, 'NEERDHUR Smokeless Chullahs'"}, {"report": "2024-2025", "page_note": "p.57, 'Pavak Chulha Project'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Nandurbar"], "state_list": ["Maharashtra"]}, {"id": "health-012", "name": "Yuva Mitra - RPF Computer Skilling Program", "thematic_area": "Health and Education", "donors": ["Rambha Philanthropy Foundation"], "location": {"villages": null, "block": "Vadangali, Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2025}, "objective": "Bridge the digital divide in rural/tribal areas by providing essential IT skills to students, homemakers and villagers, in collaboration with IIT Mumbai's Spoken Tutorial Program.", "key_interventions": ["Computer laboratory set-up at MVP's New English School & Jr. College", "Basic IT skills training (Introduction to Computers, LibreOffice Suite)", "Teacher capacity-building for Continuous Professional Development (CPD)"], "outcomes": ["800+ students trained annually in essential IT and software skills"], "beneficiaries": "800+ students annually", "source": [{"report": "2023-2024", "page_note": "p.49, 'RPF Computer Skilling Program'"}, {"report": "2024-2025", "page_note": "p.57, 'Yuva Mitra RPF Computer Skilling Program'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2023-2024", "2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "health-013", "name": "Integrated Menstrual Hygiene Management Program - Sinnar Block", "thematic_area": "Health and Education", "donors": [], "location": {"villages": "20 villages", "block": "Sinnar Block", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Raise menstrual health awareness, improve access to reusable sanitary products, and reduce stigma among adolescent girls in 20 schools.", "key_interventions": ["Awareness sessions and health camps", "Sustainable menstrual product promotion"], "outcomes": ["4,001 adolescent girls trained", "35 biodegradable bins installed", "20 vending machines installed", "13,000+ pads distributed", "94% health camp participation, 79% underwent haemoglobin testing"], "beneficiaries": "4,001 adolescent girls", "source": [{"report": "2024-2025", "page_note": "p.49-50, 'Integrated Menstrual Hygiene Management Program' (Sinnar Block)"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "health-014", "name": "Integrated Menstrual Hygiene Management Program - Igatpuri/Niphad/Sinnar", "thematic_area": "Health and Education", "donors": [], "location": {"villages": "37 villages", "block": "Igatpuri, Niphad, and Sinnar Blocks", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Raise MHM awareness, promote healthy practices, and improve access to sanitary products across 40 schools.", "key_interventions": ["Awareness sessions", "IEC material distribution", "PadCare vending machine installation", "Nutrition board installation"], "outcomes": ["4,539 adolescent girls reached across 40 schools", "40 PadCare vending machines installed"], "beneficiaries": "4,539 adolescent girls", "source": [{"report": "2024-2025", "page_note": "p.51, 'Integrated Menstrual Hygiene Management Program' (Igatpuri/Niphad/Sinnar)"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "health-015", "name": "Ensuring Better Health Among Children through Check-up Camps & Awareness", "thematic_area": "Health and Education", "donors": ["Dormer Pramet (CSR)"], "location": {"villages": null, "block": "Ankleshwar Block", "district": "Bharuch", "state": "Gujarat"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Improve well-being of adolescent girls through preventive health check-ups (haemoglobin, BMI, blood group) and cervical cancer/nutrition/anaemia awareness.", "key_interventions": ["General health check-up camps", "Cervical cancer awareness sessions"], "outcomes": ["15 general health check-up camps conducted"], "source": [{"report": "2024-2025", "page_note": "p.52, 'Ensuring Better Health Among Children through Check-up Camps & Awareness'"}], "sdgs": [3, 4, 5, 6], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Bharuch"], "state_list": ["Gujarat"]}, {"id": "health-016", "name": "Menstrual Health Management Program - Ankleshwar", "thematic_area": "Health and Education", "donors": [], "location": {"villages": null, "block": "Ankleshwar Block", "district": "Bharuch", "state": "Gujarat"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Menstrual health management program in Bharuch district, Gujarat.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.53"}], "sdgs": [3, 4, 5, 6], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Bharuch"], "state_list": ["Gujarat"]}, {"id": "health-017", "name": "Integrated Menstrual Hygiene Management Programme Schools - Phaltan & Koregaon", "thematic_area": "Health and Education", "donors": [], "location": {"villages": null, "block": "Phaltan & Koregaon Blocks", "district": "Satara", "state": "Maharashtra"}, "years_active": {"start": 2024, "end": 2025}, "objective": "MHM programme in schools across Phaltan and Koregaon blocks, Satara district.", "key_interventions": [], "outcomes": [], "source": [{"report": "2024-2025", "page_note": "p.53"}], "sdgs": [3, 4, 5, 6], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Satara"], "state_list": ["Maharashtra"]}, {"id": "health-018", "name": "Strengthening Lives Through Water, Hygiene & Dignity", "thematic_area": "Health and Education", "donors": [], "location": {"villages": null, "block": "Sanand Block", "district": "Ahmedabad", "state": "Gujarat"}, "years_active": {"start": 2024, "end": 2025}, "objective": "Integrated WASH, MHM and water conservation program in Sanand Block, focusing on rural and marginalized communities.", "key_interventions": ["Rooftop Rainwater Harvesting (RRWH) systems (2 schools)", "Pond revitalization (Vinchhiya village)", "Drinking water facilities in 5 Anganwadis", "MHM toolkit development", "WaSH infrastructure renovation (5 schools)"], "outcomes": ["MHM awareness sessions for 2,534 women and girls", "SBCC campaigns reaching 2,000+ students", "Children's Day WaSH-themed celebration with 330 students", "Training of ASHA and Anganwadi workers as frontline health educators"], "beneficiaries": "2,534 women and girls", "source": [{"report": "2024-2025", "page_note": "pp.54-56, 'Strengthening Lives Through Water, Hygiene & Dignity'"}], "sdgs": [3, 4, 5, 6], "budget": null, "report_years": ["2024-2025"], "district_list": ["Ahmedabad"], "state_list": ["Gujarat"]}, {"id": "inst-001", "name": "Farmer Producer Companies (FPC) Promotion", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": ["NABARD", "various banks/NBFCs (Nabkisan Finance Ltd. and others)"], "location": {"villages": null, "block": null, "district": "Nashik and Dhule Districts (primarily)", "state": "Maharashtra"}, "years_active": {"start": 2010, "end": 2025, "note": "Ongoing for 13+ years as of 2022-23 report"}, "objective": "Form, promote and nurture Farmer Producer Organizations/Companies across diverse commodities to enable market access, credit linkage and sustainable agri-business.", "key_interventions": ["FPO/FPC formation and registration", "Credit linkage facilitation with banks/NBFCs", "Capacity building, technical assistance, regulatory compliance support", "Value chain and market access support"], "outcomes": ["30 FPOs promoted (2022-23), reaching 11,000+ farmers", "26 FPCs promoted as of 2021-22 report, spanning vegetables, onions, pomegranates, rice, milk, poultry, goat farming, grapes, bamboo, strawberries, Paithani sarees, etc.", "25 named FPCs listed in 2021-22 report including Devnadi Valley Agricultural FPC, Green Vision FPC, Sinnar Poultry FPC, Savitribai Phule Goat Farming PC, and others"], "beneficiaries": "11,000+ farmers", "source": [{"report": "2020-2021", "page_note": "Institution Building section"}, {"report": "2021-2022", "page_note": "pp.36-39, Farmer Producer Company / FPCs Supported by Yuva Mitra table"}, {"report": "2022-2023", "page_note": "p.108, 'Empowering Farmers through Producer Organizations'"}], "sdgs": [1, 2, 8, 17], "budget": null, "report_years": ["2020-2021", "2021-2022", "2022-2023"], "district_list": ["Nashik", "Dhule Districts (primarily)"], "state_list": ["Maharashtra"]}, {"id": "inst-002", "name": "POPI Fund (Promotion of Producer Organizations and Innovation Fund)", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": ["NABARD"], "location": {"villages": null, "block": null, "district": "Nashik District", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2024}, "objective": "Extend financial and non-financial support to FPOs during their formative (minimum 3-year) years - capacity building, technical assistance, market access, regulatory compliance and professional management.", "key_interventions": ["Grant support during FPO formative years", "Technical assistance and capacity building"], "outcomes": ["Empanelled as a Cluster-Based Business Organization (CBBO) under the Central Sector Scheme for Formation and Promotion of 10,000 FPOs (from 2020-21)"], "source": [{"report": "2021-2022", "page_note": "p.36, 'Producer Organization Promoting Institutes'"}, {"report": "2022-2023", "page_note": "p.108"}], "sdgs": [1, 2, 8, 17], "beneficiaries": null, "budget": null, "report_years": ["2021-2022", "2022-2023"], "district_list": ["Nashik District"], "state_list": ["Maharashtra"]}, {"id": "inst-003", "name": "Producer Organization Promoting Institute (POPI)", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": [], "location": {"villages": null, "block": null, "district": "Nashik District", "state": "Maharashtra"}, "years_active": {"start": 2023, "end": 2025}, "objective": "Strengthen Farmer Producer Companies through institutional development, governance, compliance, sustainable agriculture, capacity building, market linkages and access to credit.", "key_interventions": ["Capacity building of FPC members", "Business strategy improvement", "Market linkage (B2B platforms)", "Credit access facilitation", "Brand building and value addition"], "outcomes": ["14 FPOs strengthened", "Rs. 5.54 crore total turnover generated", "3 FPCs received formal credit support", "Jamnadi Khore FPC: Rs. 292 lakh turnover, 780 shareholders, warehouse/weighbridge/grading unit infrastructure"], "source": [{"report": "2024-2025", "page_note": "p.68, 'Producer Organization Promoting Institute'"}], "sdgs": [1, 2, 8, 17], "beneficiaries": null, "budget": null, "report_years": ["2024-2025"], "district_list": ["Nashik District"], "state_list": ["Maharashtra"]}, {"id": "inst-004", "name": "Cluster-Based Business Organization (CBBO)", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": ["NABARD"], "location": {"villages": "190 villages", "block": null, "district": "Nashik & Dhule Districts", "state": "Maharashtra"}, "years_active": {"start": 2021, "end": 2027}, "objective": "Promote and develop FPOs by collectivizing small/marginal farmers to enhance bargaining power, market access and value chain strength, under NABARD's Central Sector Scheme for 10,000 FPOs.", "key_interventions": ["FPO formation and capacity building", "Business plan development", "Market linkage facilitation", "Stakeholder coordination"], "outcomes": ["10 FPOs registered under CBBO initiative", "7 FPCs supported with formal credit", "190 villages covered", "6,768 total shareholders", "Rs. 13.69 crore total turnover generated", "Green Wings FPC (Yeola block): Rs. 1.98 crore turnover, Rs. 17,590 profit FY23-24, 255 farmers benefited across 17 villages"], "beneficiaries": "6,768 shareholders", "source": [{"report": "2021-2022", "page_note": "p.36, 'Cluster-Based Business Organization'"}, {"report": "2024-2025", "page_note": "p.68, 'Cluster-Based Business Organization'"}], "sdgs": [1, 2, 8, 17], "budget": null, "report_years": ["2021-2022", "2024-2025"], "district_list": ["Nashik & Dhule Districts"], "state_list": ["Maharashtra"]}, {"id": "inst-005", "name": "Yuva Mitra Foundation (YMF) & Sister Organizations", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": [], "location": {"villages": null, "block": null, "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2019, "end": 2022}, "objective": "Provide technical and consultancy services in FPO formation/promotion (Yuva Mitra Foundation, registered under Section 8 of Companies Act); Yuva Mitra Multi Agro Services Pvt. Ltd. and Krushak Mitra Agro Services Pvt. Ltd. support agri-business operations; Swasthya Pad Stitching Unit supports women's livelihoods.", "key_interventions": ["Technical/consultancy services for FPOs nationally", "Onsite training programs conducted in 14 states for NABARD, JSLPS-Ranchi and others"], "outcomes": ["4,500+ participants trained under various FPO-related training programs since 2015, for NABARD, ATMA, Government of Maharashtra, MAVIM, MACP, Bharat Rural Livelihood Foundation, Tata Trusts, Jharkhand State Livelihood Promotion Society, Lupin Foundation, Ambuja Cement Foundation, Reliance Foundation, Deshpande Foundation, BAIF Mitra, NM Sadguru Water and Development Foundation, and others"], "beneficiaries": "4,500+ training participants", "source": [{"report": "2020-2021", "page_note": "Institution Building section"}, {"report": "2021-2022", "page_note": "pp.39-43, 'Yuva Mitra Foundation', 'Yuva Mitra Multi Agro Services', 'Krushak Mitra Agro Services', 'Swasthya Pad Stitching Unit', 'Training Centre'"}], "sdgs": [1, 2, 8, 17], "budget": null, "report_years": ["2020-2021", "2021-2022"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}, {"id": "inst-006", "name": "Training Centre (Mitrangan Campus)", "thematic_area": "Institution Building and Sustainable Agriculture", "donors": [], "location": {"villages": null, "block": "Sinnar", "district": "Nashik", "state": "Maharashtra"}, "years_active": {"start": 2020, "end": 2025, "note": "Ongoing facility"}, "objective": "Serve as a hub for building knowledge, skills and leadership in the rural development sector, focused on agriculture, water, sustainability and institutional development.", "key_interventions": ["3 training halls, 2 conference halls", "Residential accommodation (single/double/executive rooms)", "Green energy systems (solar water heaters, solar power)", "Capacity for 60 participants at a time"], "outcomes": ["Trained thousands of farmers, youth, community leaders, and professionals over the years"], "source": [{"report": "2021-2022", "page_note": "p.43, 'Training Centre'"}, {"report": "2024-2025", "page_note": "p.69-70, 'Training Centre'"}], "sdgs": [1, 2, 8, 17], "beneficiaries": null, "budget": null, "report_years": ["2021-2022", "2024-2025"], "district_list": ["Nashik"], "state_list": ["Maharashtra"]}];
+const ORG = {"organization": "Yuva Mitra", "tagline": "Shaping Sustainable Development", "founded_context": "25+ years of legacy as of 2020-2021 report (30 years referenced in 2020-21 acknowledgment); rural development NGO based in Nashik, Maharashtra", "thematic_verticals": ["Water Resource Development & Management", "Livelihood and Skill Development", "Health and Education", "Institution Building and Sustainable Agriculture"], "geographic_states": ["Maharashtra", "Gujarat", "Haryana", "Madhya Pradesh", "Karnataka"], "reports_analyzed": [{"year": "2020-2021", "title": "Annual Report Year 2020-2021 (Shaping Sustainable Development...)"}, {"year": "2021-2022", "title": "Annual Report Year 2021-2022 (Expansion of Ideas)"}, {"year": "2022-2023", "title": "Annual Report 2022-2023"}, {"year": "2023-2024", "title": "Annual Report 2023-2024"}, {"year": "2024-2025", "title": "Annual Report 2024-2025"}], "known_funding_partners": ["Tata Trusts", "Tata Autocomp Systems Ltd", "Tata-Ficosa", "Tata AIA", "Bajaj Allianz General Insurance Company", "Bajaj Finance Ltd", "Bajaj Holdings & Investment Ltd", "H.T. Parekh Foundation", "Rambha Charitable Trust / Rambha Philanthropy Foundation", "Azim Premji Foundation", "Glenmark Foundation", "HDFC Bank Ltd", "Reliance Foundation", "NABARD", "Ministry of Jal Shakti (GoI)", "Irrigation & Water Resources Department Haryana", "World Bank", "Water Resources Department Government of Maharashtra", "IHE Delft", "Bekaert Industries Private Ltd", "Bekaert Mukand Wire Industries Pvt Ltd", "L&T Technology Services", "Collective Good Foundation", "Vinati Organics Pvt Ltd", "KSB Pumps Ltd / KSB Care Charitable Trust", "SMFG India Credit Co. Ltd", "SCORE Livelihood Foundation", "Netherlands Enterprise Agency (RVO)/Dutch Ministry of Economic Affairs", "Arisa", "BASF", "Syngenta", "Syngenta Foundation", "Piaggio Vehicle Pvt Ltd", "Shabari/Shabri Adivasi Vitta Va Vikas Mahamandal", "Apraava Energy Pvt Ltd (formerly CLP India)", "The Nature Conservancy Centre India (TNC)", "Spandan Samaj Seva Samiti", "CSIR-NEERI", "Rambha Philanthropy Foundation", "Westbridge Advisor LLP", "Online Giving Foundation", "Pune-Solapur Expressways Pvt Ltd (PSEPL)", "Dormer Pramet", "Galaxy Surfactants", "ATE Chandra Foundation", "Gharda Chemicals", "Deshpande Foundation", "Ambuja Cement Foundation", "MAVIM", "MACP", "ATMA", "Bharat Rural Livelihood Foundation", "Jharkhand State Livelihood Promotion Society", "Lupin Foundation", "BAIF Mitra", "NM Sadguru Water and Development Foundation"], "note_on_data": "This knowledge base was built by extracting text and structured project data directly from five uploaded Yuva Mitra Annual Reports (FY2020-21 through FY2024-25). Every project record traces back to specific pages/sections within a named report year. Where a project recurs across multiple years with evolving statistics, records are consolidated with a 'report_years' field showing every report it was drawn from, and outcomes are dated within the text. No information has been fabricated or extrapolated beyond what appears in the source reports."};
+
+const tagClass = {
+  "Water Resource Development & Management":"tag-water",
+  "Livelihood and Skill Development":"tag-live",
+  "Health and Education":"tag-health",
+  "Institution Building and Sustainable Agriculture":"tag-inst"
+};
+const shortName = {
+  "Water Resource Development & Management":"Water Resource Development",
+  "Livelihood and Skill Development":"Livelihood & Skill Development",
+  "Health and Education":"Health & Education",
+  "Institution Building and Sustainable Agriculture":"Institution Building"
+};
+
+function uniq(arr){ return [...new Set(arr)].filter(Boolean).sort(); }
+
+function populateFilters(){
+  const thematics = uniq(PROJECTS.map(p=>p.thematic_area));
+  const donors = uniq(PROJECTS.flatMap(p=>p.donors));
+  const years = uniq(PROJECTS.flatMap(p=>p.report_years));
+  const states = uniq(PROJECTS.flatMap(p=>p.state_list));
+  const districts = uniq(PROJECTS.flatMap(p=>p.district_list));
+  const sdgs = uniq(PROJECTS.flatMap(p=>p.sdgs)).sort((a,b)=>a-b);
+
+  const fill = (id, items, prefix) => {
+    const sel = document.getElementById(id);
+    items.forEach(it=>{
+      const opt = document.createElement('option');
+      opt.value = it;
+      opt.textContent = prefix ? prefix+it : it;
+      sel.appendChild(opt);
+    });
+  };
+  fill('fThematic', thematics.map(t=>shortName[t]||t));
+  fill('fDonor', donors);
+  fill('fYear', years, 'FY ');
+  fill('fState', states);
+  fill('fDistrict', districts);
+  fill('fSDG', sdgs, 'SDG ');
+
+  document.getElementById('statProjects').textContent = PROJECTS.length;
+  document.getElementById('statDistricts').textContent = districts.length;
+  document.getElementById('statDonors').textContent = donors.length;
+}
+
+function matchesFilters(p){
+  const q = document.getElementById('searchBox').value.trim().toLowerCase();
+  const thematic = document.getElementById('fThematic').value;
+  const donor = document.getElementById('fDonor').value;
+  const year = document.getElementById('fYear').value;
+  const state = document.getElementById('fState').value;
+  const district = document.getElementById('fDistrict').value;
+  const sdg = document.getElementById('fSDG').value;
+
+  if(thematic && (shortName[p.thematic_area]||p.thematic_area) !== thematic) return false;
+  if(donor && !p.donors.includes(donor)) return false;
+  if(year && !p.report_years.includes(year)) return false;
+  if(state && !p.state_list.includes(state)) return false;
+  if(district && !p.district_list.includes(district)) return false;
+  if(sdg && !p.sdgs.includes(parseInt(sdg))) return false;
+
+  if(q){
+    const hay = [
+      p.name, p.objective, p.thematic_area,
+      p.donors.join(' '), p.location.district, p.location.state, p.location.block, p.location.villages,
+      p.key_interventions.join(' '), p.outcomes.join(' ')
+    ].join(' ').toLowerCase();
+    if(!hay.includes(q)) return false;
+  }
+  return true;
+}
+
+function durationLabel(p){
+  const y = p.years_active;
+  if(!y) return '—';
+  let s = (y.start||'?') + '–' + (y.end||'present');
+  return s;
+}
+
+function renderCards(){
+  const grid = document.getElementById('cardGrid');
+  grid.innerHTML = '';
+  const filtered = PROJECTS.filter(matchesFilters);
+  document.getElementById('resultCount').textContent = filtered.length + ' of ' + PROJECTS.length + ' projects';
+  document.getElementById('emptyState').style.display = filtered.length ? 'none':'block';
+
+  filtered.forEach((p,idx)=>{
+    const card = document.createElement('div');
+    card.className = 'card ' + (tagClass[p.thematic_area]||'');
+    const loc = p.location;
+    const locStr = [loc.villages, loc.block, loc.district, loc.state].filter(Boolean).join(', ');
+    const cardId = 'card_'+idx+'_'+p.id;
+
+    card.innerHTML = `
+      <div class="vertical">${shortName[p.thematic_area]||p.thematic_area}</div>
+      <h3>${p.name}</h3>
+      <div class="metarow">
+        <span><b>Duration:</b> ${durationLabel(p)}</span>
+        <span><b>Location:</b> ${locStr||'—'}</span>
+      </div>
+      <div class="metarow">
+        <span><b>Donor:</b> ${p.donors.length? p.donors.join(', ') : 'Not specified in report'}</span>
+      </div>
+      ${p.beneficiaries? `<div class="metarow"><span><b>Beneficiaries:</b> ${p.beneficiaries}</span></div>`:''}
+      ${p.budget? `<div class="metarow"><span><b>Budget:</b> ${p.budget}</span></div>`:''}
+      <div class="obj">${p.objective}</div>
+      <button class="expand" onclick="toggleDetails('${cardId}')">Show interventions, outcomes &amp; source ↓</button>
+      <div class="details" id="${cardId}">
+        ${p.key_interventions.length?`<h4>Key interventions</h4><ul>${p.key_interventions.map(i=>`<li>${i}</li>`).join('')}</ul>`:''}
+        ${p.outcomes.length?`<h4>Outcomes</h4><ul>${p.outcomes.map(i=>`<li>${i}</li>`).join('')}</ul>`:''}
+        <h4>Reported in</h4>
+        <div class="fylist">${p.report_years.map(y=>`<span class="fy-chip">FY ${y}</span>`).join('')}</div>
+        <div class="source-line">${p.source.map(s=>`[${s.report}] ${s.page_note||''}`).join(' · ')}</div>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+}
+
+function toggleDetails(id){
+  document.getElementById(id).classList.toggle('open');
+}
+
+function clearFilters(){
+  document.getElementById('searchBox').value='';
+  ['fThematic','fDonor','fYear','fState','fDistrict','fSDG'].forEach(id=>document.getElementById(id).value='');
+  renderCards();
+}
+
+['searchBox','fThematic','fDonor','fYear','fState','fDistrict','fSDG'].forEach(id=>{
+  document.getElementById(id).addEventListener('input', renderCards);
+  document.getElementById(id).addEventListener('change', renderCards);
+});
+
+populateFilters();
+renderCards();
+
+/* ===================== CHATBOT (RAG grounded in PROJECTS JSON) ===================== */
+
+function openChat(){
+  document.getElementById('chatDrawer').classList.add('open');
+  document.getElementById('overlay').classList.add('open');
+}
+function closeChat(){
+  document.getElementById('chatDrawer').classList.remove('open');
+  document.getElementById('overlay').classList.remove('open');
+}
+
+let chatHistory = [];
+
+function appendMsg(role, html){
+  const body = document.getElementById('chatBody');
+  const div = document.createElement('div');
+  div.className = 'msg ' + (role==='user'?'user':'bot');
+  div.innerHTML = html;
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+  return div;
+}
+
+function askSuggested(btn){
+  document.getElementById('chatInput').value = btn.textContent;
+  sendChat();
+}
+
+function buildSystemPrompt(){
+  // Compress the KB into a compact context block the model must ground answers in.
+  const lines = [];
+  lines.push("You are 'Archive Assistant' for the Yuva Mitra Project Archive website. You answer ONLY using the JSON project records provided below, which were extracted directly from Yuva Mitra's five Annual Reports (FY2020-21 to FY2024-25).");
+  lines.push("STRICT RULES:");
+  lines.push("1. Only state facts that appear in the records below. Never invent projects, donors, figures, locations, or years.");
+  lines.push("2. If the answer isn't in the records, say so plainly and suggest what IS available instead.");
+  lines.push("3. When answering, cite which report year(s) and project the information comes from, e.g. '(FY2022-23, Jal Kavach Project)'.");
+  lines.push("4. For 'how many years has Yuva Mitra worked on X' questions, compute the span from years_active/report_years fields across matching records — show your reasoning briefly (e.g., earliest start year to latest end/report year).");
+  lines.push("5. Keep answers concise, well-organized (use short paragraphs or bullet lists), and written for a CSR/donor audience.");
+  lines.push("6. Format using simple markdown: **bold**, bullet points with '-', nothing fancier.");
+  lines.push("");
+  lines.push("PROJECT RECORDS (JSON):");
+  lines.push(JSON.stringify(PROJECTS));
+  return lines.join("\n");
+}
+
+function mdToHtml(md){
+  let html = md
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+    .replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>');
+  const lines = html.split('\n');
+  let out = ''; let inList=false;
+  for(const line of lines){
+    const trimmed = line.trim();
+    if(trimmed.startsWith('- ')){
+      if(!inList){ out+='<ul>'; inList=true; }
+      out += '<li>'+trimmed.slice(2)+'</li>';
+    } else {
+      if(inList){ out+='</ul>'; inList=false; }
+      if(trimmed) out += '<p>'+trimmed+'</p>';
+    }
+  }
+  if(inList) out+='</ul>';
+  return out;
+}
+
+async function sendChat(){
+  const input = document.getElementById('chatInput');
+  const q = input.value.trim();
+  if(!q) return;
+  input.value='';
+  document.getElementById('chatSendBtn').disabled = true;
+  appendMsg('user', q.replace(/&/g,'&amp;').replace(/</g,'&lt;'));
+  const typingEl = appendMsg('bot', '<span class="typing">Reading the archive…</span>');
+
+  chatHistory.push({role:'user', content:q});
+
+  const endpoint = CHAT_WORKER_URL || "https://api.anthropic.com/v1/messages";
+  const requestBody = {
+    model: "claude-sonnet-4-6",
+    max_tokens: 1000,
+    system: buildSystemPrompt(),
+    messages: chatHistory
+  };
+
+  try{
+    const resp = await fetch(endpoint, {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify(requestBody)
+    });
+
+    if(!resp.ok && !CHAT_WORKER_URL && (resp.status === 401 || resp.status === 403 || resp.status === 0)){
+      throw new Error("direct-call-unavailable");
+    }
+
+    const data = await resp.json();
+    let text = '';
+    if(data && data.content){
+      text = data.content.map(b=>b.type==='text'?b.text:'').join('\n');
+    }
+    if(!text && data && data.error){
+      throw new Error(data.error.message || "API error");
+    }
+    if(!text) text = "I couldn't generate a response just now — please try rephrasing your question.";
+    chatHistory.push({role:'assistant', content:text});
+    typingEl.innerHTML = mdToHtml(text);
+  }catch(err){
+    if(!CHAT_WORKER_URL){
+      typingEl.innerHTML = '<p><strong>Chat isn\'t connected yet on this deployment.</strong> This page is calling the Anthropic API directly, which only works inside a Claude.ai artifact. To enable chat on a public site, deploy the included Cloudflare Worker and set <code>CHAT_WORKER_URL</code> near the top of this file\'s script. Meanwhile, search and filters above work fully offline.</p>';
+    } else {
+      typingEl.innerHTML = '<p>Something went wrong reaching the archive assistant. Please try again in a moment.</p>';
+    }
+  }
+  document.getElementById('chatSendBtn').disabled = false;
+  document.getElementById('chatBody').scrollTop = document.getElementById('chatBody').scrollHeight;
+}
+</script>
+</body>
+</html>
