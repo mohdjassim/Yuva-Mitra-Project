@@ -228,9 +228,13 @@
   .map-legend label{ display:flex; align-items:center; gap:7px; font-size:13px; color:var(--ink-soft); }
   .legend-count{ color:var(--ink-faint); font-size:11.5px; }
   .dot{ width:11px; height:11px; border-radius:50%; display:inline-block; border:1.5px solid rgba(255,255,255,0.9); box-shadow:0 0 0 1px rgba(20,40,45,0.15);}
-  .dot-ongoing{ background:#2E6F9E; }
-  .dot-completed{ background:#C1272D; }
-  .dot-mixed{ background:#7B3F9E; }
+  .dot-water{ background:#1F6FA0; }
+  .dot-live{ background:#E07B24; }
+  .dot-health{ background:#C1272D; }
+  .dot-inst{ background:#1B5E3A; }
+  .dot-integrated{ background:#6B5B95; }
+  .map-legend label{ cursor:default; padding:3px 8px; border-radius:14px; transition:background .15s ease, box-shadow .15s ease; }
+  .map-legend label.legend-active{ background:rgba(20,45,45,0.06); box-shadow:0 0 0 1.5px currentColor inset; font-weight:600; color:var(--ink); }
   .map-legend select{ background:#fff; border:1px solid var(--rule-strong); margin-left:auto;}
   #indiaMap{ width:100%; height:780px; border-radius:var(--radius); border:1px solid var(--rule); }
   .map-card{ background:#fff; padding:8px; border-radius:calc(var(--radius) + 6px); box-shadow:var(--shadow); }
@@ -297,6 +301,7 @@
   .map-popup .pstatus.ongoing{ background:#dbe9f2; color:#1a4a68; }
   .map-popup .pstatus.completed{ background:#f7dcdd; color:#7a1519; }
   .map-popup .pstatus.mixed{ background:#e9defa; color:#4a2668; }
+  .theme-dot{ display:inline-block; width:9px; height:9px; border-radius:50%; margin-left:6px; vertical-align:middle; box-shadow:0 0 0 1px rgba(255,255,255,0.7);}
   .map-popup p{ margin:3px 0; font-size:12.5px; color:var(--ink-soft); }
   .popup-project-row{
     margin-bottom:8px; padding:8px 8px 9px; border-bottom:1px solid var(--rule);
@@ -371,9 +376,11 @@
       <p style="margin:0; color:var(--ink-soft); font-size:14.5px; max-width:640px;">Each shaded district is where the archive has at least one project. Click a district for the full list of projects there, each tagged Ongoing or Completed. Use the dropdown to isolate one thematic area.</p>
     </div>
     <div class="map-legend">
-      <label><span class="dot dot-ongoing"></span> Ongoing only <span class="legend-count" id="legendOngoing"></span></label>
-      <label><span class="dot dot-completed"></span> Completed only <span class="legend-count" id="legendCompleted"></span></label>
-      <label><span class="dot dot-mixed"></span> Both <span class="legend-count" id="legendMixed"></span></label>
+      <label id="legendWater" data-theme="Water Resource Development &amp; Management"><span class="dot dot-water"></span> Water Resource Dev. <span class="legend-count" id="legendWaterCount"></span></label>
+      <label id="legendLive" data-theme="Livelihood and Skill Development"><span class="dot dot-live"></span> Livelihood &amp; Skill <span class="legend-count" id="legendLiveCount"></span></label>
+      <label id="legendHealth" data-theme="Health and Education"><span class="dot dot-health"></span> Health &amp; Education <span class="legend-count" id="legendHealthCount"></span></label>
+      <label id="legendInst" data-theme="Institution Building and Sustainable Agriculture"><span class="dot dot-inst"></span> Institution Building <span class="legend-count" id="legendInstCount"></span></label>
+      <label id="legendIntegrated" data-theme="Integrated Interventions"><span class="dot dot-integrated"></span> Integrated <span class="legend-count" id="legendIntegratedCount"></span></label>
       <select id="mapThematicFilter"><option value="">All thematic areas</option></select>
     </div>
     <div class="map-card">
@@ -660,40 +667,67 @@ let geoLayer = null;
 
 function statusClass(s){ return s==='Completed' ? 'completed' : (s==='Mixed' ? 'mixed' : 'ongoing'); }
 
-function districtColor(status){
-  if(status === 'Completed') return '#C1272D';  // strong red — high contrast, reads clearly on any basemap
-  if(status === 'Mixed') return '#7B3F9E';       // vivid purple — distinct from both red and blue
-  if(status === 'Ongoing') return '#2E6F9E';     // rich blue — high contrast, never confused with OSM green land/parks
-  return '#5B5645'; // no matching projects under current filter
+// Distinct, high-contrast color per thematic area, used for district fill,
+// legend swatches, and popup headers on the map only — nowhere else on the site.
+const THEME_COLORS = {
+  "Water Resource Development & Management": "#1F6FA0",              // Blue
+  "Livelihood and Skill Development": "#E07B24",                      // Orange
+  "Health and Education": "#C1272D",                                  // Red
+  "Institution Building and Sustainable Agriculture": "#1B5E3A",       // Dark Green
+  "Integrated Interventions": "#6B5B95"                               // Muted purple (cross-cutting projects)
+};
+const THEME_LEGEND_IDS = {
+  "Water Resource Development & Management": "legendWater",
+  "Livelihood and Skill Development": "legendLive",
+  "Health and Education": "legendHealth",
+  "Institution Building and Sustainable Agriculture": "legendInst",
+  "Integrated Interventions": "legendIntegrated"
+};
+const DEFAULT_DISTRICT_COLOR = "#9AA6A6"; // neutral grey — districts with no match under the current filter
+
+function districtColor(theme){
+  return THEME_COLORS[theme] || DEFAULT_DISTRICT_COLOR;
 }
 
 function computeDistrictStatuses(thematicFilter){
-  const map = {}; // "State|District" -> {ongoing:bool, completed:bool, projects:[]}
+  const map = {}; // "State|District" -> {state, district, projects:[], themeCounts:{theme:count}}
   PROJECTS.forEach(p=>{
     if(thematicFilter && p.thematic_area !== thematicFilter) return;
     (p.map_districts||[]).forEach(d=>{
       const key = d.state+'|'+d.district;
-      if(!map[key]) map[key] = {state:d.state, district:d.district, ongoing:false, completed:false, projects:[]};
-      if(p.status === 'Ongoing') map[key].ongoing = true; else map[key].completed = true;
+      if(!map[key]) map[key] = {state:d.state, district:d.district, projects:[], themeCounts:{}};
       map[key].projects.push(p);
+      map[key].themeCounts[p.thematic_area] = (map[key].themeCounts[p.thematic_area]||0) + 1;
     });
+  });
+  // Work out each district's dominant theme (most projects of one theme) —
+  // used to color a district when no specific thematic filter is selected.
+  Object.values(map).forEach(info=>{
+    let bestTheme = null, bestCount = -1;
+    Object.entries(info.themeCounts).forEach(([theme,count])=>{
+      if(count > bestCount){ bestTheme = theme; bestCount = count; }
+    });
+    info.dominantTheme = bestTheme;
+    info.ongoing = info.projects.some(p=>p.status==='Ongoing');
+    info.completed = info.projects.some(p=>p.status==='Completed');
   });
   return map;
 }
 
-function districtPopupHtml(info){
+function districtPopupHtml(info, themeColor){
   const ongoingCount = info.projects.filter(p=>p.status==='Ongoing').length;
   const completedCount = info.projects.filter(p=>p.status==='Completed').length;
   const rows = info.projects.map(p=>`
     <div class="popup-project-row" onclick="goToProject('${p.id}')" title="View this project's full details">
       <span class="pstatus ${statusClass(p.status)}">${p.status}</span>
+      <span class="theme-dot" style="background:${districtColor(p.thematic_area)};" title="${shortName[p.thematic_area]||p.thematic_area}"></span>
       <div class="popup-project-name">${p.name}</div>
       <div style="font-size:11.5px; color:var(--ink-soft);">${shortName[p.thematic_area]||p.thematic_area} · ${durationLabel(p)}</div>
       <div class="popup-view-link">View project details →</div>
     </div>
   `).join('');
   return `<div class="map-popup" style="max-height:320px; overflow-y:auto; min-width:250px;">
-    <div class="district-pop-header">
+    <div class="district-pop-header" style="background:linear-gradient(135deg, ${themeColor} 0%, ${themeColor}cc 100%);">
       <div class="dname">${info.district}</div>
       <div class="dstate">${info.state} · ${info.projects.length} project${info.projects.length===1?'':'s'} (${ongoingCount} ongoing, ${completedCount} completed)</div>
     </div>
@@ -791,21 +825,26 @@ function renderDistrictLayer(){
   const thematicFilter = document.getElementById('mapThematicFilter').value;
   const statusMap = computeDistrictStatuses(thematicFilter);
 
-  let ongoingOnly=0, completedOnly=0, mixed=0;
+  // Count *districts* per theme (for the legend), based on each district's
+  // dominant theme when no filter is active, or simply whether it matches
+  // when a specific theme filter is selected.
+  const themeDistrictCounts = {};
+  Object.values(THEME_LEGEND_IDS).forEach(()=>{}); // no-op, kept for clarity
+  Object.keys(THEME_COLORS).forEach(t => themeDistrictCounts[t] = 0);
 
   geoLayer = L.geoJSON(DISTRICTS_GEOJSON, {
     style: feature => {
       const key = feature.properties.state+'|'+feature.properties.district;
       const info = statusMap[key];
-      let status = null;
-      if(info){
-        status = (info.ongoing && info.completed) ? 'Mixed' : (info.ongoing ? 'Ongoing' : 'Completed');
+      if(!info){
+        return { color:'#F2ECDC', weight:1, fillColor:DEFAULT_DISTRICT_COLOR, fillOpacity:0.10 };
       }
+      const theme = thematicFilter || info.dominantTheme;
       return {
         color: '#F2ECDC',
         weight: 1,
-        fillColor: districtColor(status),
-        fillOpacity: info ? 0.75 : 0.12
+        fillColor: districtColor(theme),
+        fillOpacity: 0.78
       };
     },
     onEachFeature: (feature, layer) => {
@@ -828,18 +867,25 @@ function renderDistrictLayer(){
       });
 
       if(info){
-        const status = (info.ongoing && info.completed) ? 'Mixed' : (info.ongoing ? 'Ongoing' : 'Completed');
-        if(status==='Ongoing') ongoingOnly++; else if(status==='Completed') completedOnly++; else mixed++;
-        bindPopupWithFade(layer, districtPopupHtml({state:feature.properties.state, district:feature.properties.district, projects: info.projects}));
+        const theme = thematicFilter || info.dominantTheme;
+        if(theme && themeDistrictCounts.hasOwnProperty(theme)) themeDistrictCounts[theme]++;
+        const themeColor = districtColor(theme);
+        bindPopupWithFade(layer, districtPopupHtml({state:feature.properties.state, district:feature.properties.district, projects: info.projects}, themeColor));
         layer.on('mouseover', ()=> layer.setStyle({weight:2.5, color:'#241F16'}));
         layer.on('mouseout', ()=> layer.setStyle({weight:1, color:'#F2ECDC'}));
       }
     }
   }).addTo(mapInstance);
 
-  document.getElementById('legendOngoing').textContent = '('+ongoingOnly+')';
-  document.getElementById('legendCompleted').textContent = '('+completedOnly+')';
-  document.getElementById('legendMixed').textContent = '('+mixed+')';
+  Object.entries(THEME_LEGEND_IDS).forEach(([theme, labelId])=>{
+    const countEl = document.getElementById(labelId+'Count');
+    if(countEl) countEl.textContent = '('+(themeDistrictCounts[theme]||0)+')';
+    const labelEl = document.getElementById(labelId);
+    if(labelEl){
+      labelEl.classList.toggle('legend-active', thematicFilter === theme);
+      labelEl.style.color = (thematicFilter === theme) ? THEME_COLORS[theme] : '';
+    }
+  });
 }
 
 initIndiaMap();
